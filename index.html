@@ -234,8 +234,8 @@
     .profile-grid{gap:22px}
     .profile-photo{
       border-radius:50%;aspect-ratio:1/1;
-      border:7px solid rgba(255,255,255,.9);
-      box-shadow:0 8px 30px rgba(217,120,151,.12);
+      border:0;
+      box-shadow:none;
       background-position:center;background-size:cover;
       margin-bottom:18px;
     }
@@ -481,6 +481,25 @@
       }
     }
 
+  
+    /* story timeline photos */
+    .moment-copy{display:block}
+    .moment-photo-wrap{margin-top:14px}
+    .moment-photo{
+      width:100%;
+      aspect-ratio:4/5;
+      object-fit:cover;
+      display:block;
+      border-radius:14px;
+      box-shadow:0 12px 30px rgba(119,74,88,.10);
+      border:1px solid #f2e6ea;
+      background:#f8f2f4;
+    }
+    .reveal.on .timeline .moment .moment-photo{
+      transform:none;
+      opacity:1;
+    }
+
   </style>
 </head>
 <body>
@@ -553,9 +572,36 @@
     <div class="story-card">
       <h2 class="section-title" style="font-size:23px">우리가 우리가 되기까지</h2>
       <div class="timeline">
-        <div class="moment"><div class="year">2018</div><div><h3>처음 만난 날</h3><p>별일 없던 하루가 오래 기억할 날이 되었습니다.</p></div></div>
-        <div class="moment"><div class="year">2021</div><div><h3>함께 사는 연습</h3><p>취향은 달라도 저녁 메뉴만큼은 늘 진지했습니다.</p></div></div>
-        <div class="moment"><div class="year">2027</div><div><h3>이제, 평생의 우리</h3><p>가장 다정한 편이 되어 같은 집으로 돌아갑니다.</p></div></div>
+        <div class="moment">
+          <div class="year">2018</div>
+          <div class="moment-copy">
+            <h3>처음 만난 날</h3>
+            <p>별일 없던 하루가 오래 기억할 날이 되었습니다.</p>
+            <div class="moment-photo-wrap">
+              <img class="moment-photo" src="images/story_2018.webp" alt="2018년의 두 사람 사진" loading="lazy" />
+            </div>
+          </div>
+        </div>
+        <div class="moment">
+          <div class="year">2021</div>
+          <div class="moment-copy">
+            <h3>함께 사는 연습</h3>
+            <p>취향은 달라도 저녁 메뉴만큼은 늘 진지했습니다.</p>
+            <div class="moment-photo-wrap">
+              <img class="moment-photo" src="images/story_2021.webp" alt="2021년의 두 사람 사진" loading="lazy" />
+            </div>
+          </div>
+        </div>
+        <div class="moment">
+          <div class="year">2027</div>
+          <div class="moment-copy">
+            <h3>이제, 평생의 우리</h3>
+            <p>가장 다정한 편이 되어 같은 집으로 돌아갑니다.</p>
+            <div class="moment-photo-wrap">
+              <img class="moment-photo" src="images/story_2027.webp" alt="2027년의 두 사람 사진" loading="lazy" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
