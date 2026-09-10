@@ -584,6 +584,60 @@
       background:#fff;
     }
 
+  
+    /* 2022 timeline photo crop */
+    .timeline .moment:nth-child(3) .moment-photo{
+      width:100%;
+      aspect-ratio:4/5;
+      height:auto;
+      object-fit:cover;
+      object-position:center center;
+    }
+
+  
+    /* embedded map */
+    .map-art{
+      overflow:hidden;
+      background:#f6f1f3;
+    }
+    .map-art.embed:before,
+    .map-art.embed:after{
+      display:none;
+    }
+    .map-frame{
+      display:block;
+      width:100%;
+      height:100%;
+      border:0;
+    }
+
+  
+    /* gallery more */
+    .gallery-grid .photo-slot.gallery-hidden{display:none}
+    .gallery-grid.show-all .photo-slot.gallery-hidden{display:grid}
+    .gallery-more-wrap{
+      display:flex;
+      justify-content:center;
+      padding:26px 30px 0;
+    }
+    .gallery-more-btn{
+      border:1px solid #eadfe3;
+      background:#fff;
+      color:#6f666a;
+      border-radius:999px;
+      padding:12px 22px;
+      font-size:11px;
+      letter-spacing:.04em;
+      cursor:pointer;
+      transition:background .2s ease,transform .2s ease;
+    }
+    .gallery-more-btn:active{transform:scale(.98)}
+
+  
+    .reveal.on .gallery-grid .photo-slot:nth-child(11){transition-delay:1.12s}
+    .reveal.on .gallery-grid .photo-slot:nth-child(12){transition-delay:1.22s}
+    .reveal.on .gallery-grid .photo-slot:nth-child(13){transition-delay:1.32s}
+
   </style>
 </head>
 <body>
@@ -700,9 +754,15 @@
       <div class="photo-slot" data-photo-slot="gallery5">PHOTO 05</div>
       <div class="photo-slot" data-photo-slot="gallery6">PHOTO 06</div>
       <div class="photo-slot" data-photo-slot="gallery7">PHOTO 07</div>
-      <div class="photo-slot" data-photo-slot="gallery8">PHOTO 08</div>
-      <div class="photo-slot" data-photo-slot="gallery9">PHOTO 09</div>
-      <div class="photo-slot" data-photo-slot="gallery10">PHOTO 10</div>
+      <div class="photo-slot gallery-hidden" data-photo-slot="gallery8">PHOTO 08</div>
+      <div class="photo-slot gallery-hidden" data-photo-slot="gallery9">PHOTO 09</div>
+      <div class="photo-slot gallery-hidden" data-photo-slot="gallery10">PHOTO 10</div>
+      <div class="photo-slot gallery-hidden" data-photo-slot="gallery11">PHOTO 11</div>
+      <div class="photo-slot gallery-hidden" data-photo-slot="gallery12">PHOTO 12</div>
+      <div class="photo-slot gallery-hidden" data-photo-slot="gallery13">PHOTO 13</div>
+    </div>
+    <div class="gallery-more-wrap">
+      <button class="gallery-more-btn" id="galleryMoreBtn" type="button">사진 더보기</button>
     </div>
   </section>
 
@@ -710,10 +770,10 @@
     <p class="section-label">Location</p>
     <h2 class="section-title">오시는 길</h2>
     <div class="venue-card">
-      <div class="map-art" aria-hidden="true"></div>
+      <div class="map-art embed"><iframe class="map-frame" title="용산 리베르 스튜디오 위치 지도" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%9A%A9%EC%82%B0%EA%B5%AC%20%EC%9D%B4%EC%B4%8C%EB%A1%9C%205%209%EC%B8%B5&output=embed"></iframe></div>
       <div class="venue-info"><p class="venue-name" data-venue>용산 리베르 스튜디오</p><p class="venue-address" data-address>서울특별시 용산구 이촌로 5 9층</p><div class="button-row"><a class="btn" id="naverMap" target="_blank" rel="noopener">네이버 지도</a><a class="btn" id="kakaoMap" target="_blank" rel="noopener">카카오맵</a></div></div>
     </div>
-    <div class="notice"><strong>대중교통 안내</strong><br>서울숲역 5번 출구에서 도보 7분 거리입니다.<br>마음 편히 축하해 주실 수 있도록 대중교통 이용을 권해드려요.</div>
+    <div class="notice"><strong>오시는 길 안내</strong><br>예식 장소는 <strong>용산 리베르 스튜디오</strong>이며, 서울특별시 용산구 이촌로 5, 9층에 위치해 있습니다.<br>상세 위치는 위 지도를 참고해 주세요. 건물 도착 후 엘리베이터를 이용해 9층으로 올라오시면 됩니다.</div>
   </section>
 
   <section class="wedding-info reveal">
@@ -776,7 +836,7 @@
     venue: '용산 리베르 스튜디오', address: '서울특별시 용산구 이촌로 5 9층',
     accountA: '카카오뱅크 3333-01-1234567', accountB: '토스뱅크 1000-2345-6789',
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
-    photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', closing:'' }
+    photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', gallery11:'images/gallery_11.webp', gallery12:'images/gallery_12.webp', gallery13:'images/gallery_13.webp', closing:'' }
   };
   const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.querySelector('#accountA').textContent=CONFIG.accountA; document.querySelector('#accountB').textContent=CONFIG.accountB; document.title=`${CONFIG.personA} & ${CONFIG.personB}의 결혼식`;
   const encoded=encodeURIComponent(CONFIG.address); document.querySelector('#naverMap').href=`https://map.naver.com/p/search/${encoded}`; document.querySelector('#kakaoMap').href=`https://map.kakao.com/link/search/${encoded}`;
@@ -819,6 +879,14 @@
   tick();setInterval(tick,1000);
   const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.10,rootMargin:'0px 0px -8% 0px'});all('.reveal').forEach(e=>observer.observe(e));
   all('.account-head').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open'))); const toast=(msg)=>{const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}; all('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{await navigator.clipboard.writeText(document.querySelector('#'+b.dataset.copy).textContent);toast('계좌번호를 복사했어요')}));
+
+
+  const galleryGrid=document.querySelector('.gallery-grid');
+  const galleryMoreBtn=document.querySelector('#galleryMoreBtn');
+  galleryMoreBtn?.addEventListener('click',()=>{
+    const expanded=galleryGrid.classList.toggle('show-all');
+    galleryMoreBtn.textContent=expanded?'접기':'사진 더보기';
+  });
 
   const galleryKeys=Object.keys(CONFIG.photos).filter(k=>/^gallery\d+$/.test(k) && CONFIG.photos[k]);
   const galleryDialog=document.querySelector('#galleryDialog');
