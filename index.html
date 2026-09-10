@@ -518,7 +518,7 @@
     <img class="hero-photo" src="images/hero_hanbok.webp" alt="두 사람이 함께 촬영한 메인 커플 사진" />
     <h1 class="title-en">We do,<br><i>our way.</i></h1>
     <p class="hero-names"><span data-a>하늘</span> <em style="color:var(--coral);font-style:normal">♥</em> <span data-b>다온</span></p>
-    <p class="hero-date"><span data-date>2027. 05. 15. SAT</span> · <span data-time>오후 3시</span></p>
+    <p class="hero-date"><span data-date>2022. 12. 04. SUN</span> · <span data-time>오전 11시</span></p>
     <p class="hero-venue" data-venue>보태니컬 하우스 2층 가든홀</p>
     <a href="#greeting" class="scroll" aria-label="아래로 이동"></a>
   </header>
@@ -551,18 +551,17 @@
 
   <section class="calendar-wrap reveal">
     <p class="section-label">Save the date</p>
-    <h2 class="month">May 2027</h2>
-    <p style="font-size:12px;color:rgba(255,255,255,.65)"><span data-date-long>2027년 5월 15일 토요일</span> · <span data-time>오후 3시</span></p>
-    <div class="calendar" aria-label="2027년 5월 달력">
+    <h2 class="month">December 2022</h2>
+    <p style="font-size:12px;color:rgba(255,255,255,.65)"><span data-date-long>2022년 12월 4일 일요일</span> · <span data-time>오전 11시</span></p>
+    <div class="calendar" aria-label="2022년 12월 달력">
       <b>SUN</b><b>MON</b><b>TUE</b><b>WED</b><b>THU</b><b>FRI</b><b>SAT</b>
-      <span class="blank">0</span><span class="blank">0</span><span class="blank">0</span><span class="blank">0</span><span class="blank">0</span><span class="blank">0</span><span>1</span>
-      <span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
-      <span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span class="wedding-day">15</span>
-      <span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span>
-      <span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span>
-      <span>30</span><span>31</span>
+      <span class="blank">0</span><span class="blank">0</span><span class="blank">0</span><span class="blank">0</span><span>1</span><span>2</span><span>3</span>
+      <span class="wedding-day">4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+      <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span>
+      <span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>
+      <span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
     </div>
-    <p style="font-family:'Gowun Batang',serif;font-size:13px">우리의 결혼식까지</p>
+    <p id="countdownLabel" style="font-family:'Gowun Batang',serif;font-size:13px">우리의 결혼식까지</p>
     <div class="countdown"><div class="count-box"><strong id="days">—</strong><small>DAYS</small></div><div class="count-box"><strong id="hours">—</strong><small>HOURS</small></div><div class="count-box"><strong id="minutes">—</strong><small>MIN</small></div><div class="count-box"><strong id="seconds">—</strong><small>SEC</small></div></div>
     <button class="btn outline" id="calendarBtn">＋ 캘린더에 저장</button>
   </section>
@@ -593,12 +592,12 @@
           </div>
         </div>
         <div class="moment">
-          <div class="year">2027</div>
+          <div class="year">2022</div>
           <div class="moment-copy">
             <h3>이제, 평생의 우리</h3>
             <p>가장 다정한 편이 되어 같은 집으로 돌아갑니다.</p>
             <div class="moment-photo-wrap">
-              <img class="moment-photo" src="images/story_2027.webp" alt="2027년의 두 사람 사진" loading="lazy" />
+              <img class="moment-photo" src="images/story_2027.webp" alt="2022년의 두 사람 사진" loading="lazy" />
             </div>
           </div>
         </div>
@@ -670,8 +669,8 @@
   /* ===== 여기만 수정하면 청첩장 전체 정보가 바뀝니다 ===== */
   const CONFIG = {
     personA: '하늘', personB: '다온',
-    weddingDate: '2027-05-15T15:00:00+09:00',
-    dateText: '2027. 05. 15. SAT', dateLong: '2027년 5월 15일 토요일', timeText: '오후 3시',
+    weddingDate: '2022-12-04T11:00:00+09:00',
+    dateText: '2022. 12. 04. SUN', dateLong: '2022년 12월 4일 일요일', timeText: '오전 11시',
     venue: '보태니컬 하우스 2층 가든홀', address: '서울특별시 성동구 서울숲길 27',
     accountA: '카카오뱅크 3333-01-1234567', accountB: '토스뱅크 1000-2345-6789',
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
@@ -700,7 +699,22 @@
     });
   }
 
-  const target=new Date(CONFIG.weddingDate).getTime(); function tick(){let gap=Math.max(0,target-Date.now()),d=Math.floor(gap/864e5); gap%=864e5; const h=Math.floor(gap/36e5);gap%=36e5;const m=Math.floor(gap/6e4);const s=Math.floor((gap%6e4)/1000);[['days',d],['hours',h],['minutes',m],['seconds',s]].forEach(([id,v])=>document.querySelector('#'+id).textContent=String(v).padStart(2,'0'))} tick();setInterval(tick,1000);
+  const target=new Date(CONFIG.weddingDate).getTime();
+  function tick(){
+    const now=Date.now();
+    const isPast=now>=target;
+    let gap=Math.abs(target-now);
+    const d=Math.floor(gap/864e5); gap%=864e5;
+    const h=Math.floor(gap/36e5); gap%=36e5;
+    const m=Math.floor(gap/6e4);
+    const s=Math.floor((gap%6e4)/1000);
+    const label=document.querySelector('#countdownLabel');
+    if(label) label.textContent=isPast?'함께한 시간':'우리의 결혼식까지';
+    [['days',d],['hours',h],['minutes',m],['seconds',s]].forEach(([id,v])=>{
+      document.querySelector('#'+id).textContent=String(v).padStart(2,'0');
+    });
+  }
+  tick();setInterval(tick,1000);
   const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.10,rootMargin:'0px 0px -8% 0px'});all('.reveal').forEach(e=>observer.observe(e));
   all('.account-head').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open'))); const toast=(msg)=>{const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}; all('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{await navigator.clipboard.writeText(document.querySelector('#'+b.dataset.copy).textContent);toast('계좌번호를 복사했어요')}));
   const dialog=document.querySelector('#rsvpDialog'); const openDialog=()=>dialog.showModal(); document.querySelector('#rsvpBtn').onclick=openDialog;document.querySelector('#bottomRsvp').onclick=openDialog;document.querySelector('#closeDialog').onclick=()=>dialog.close();document.querySelector('#rsvpForm').onsubmit=e=>{e.preventDefault();localStorage.setItem('wedding-rsvp',JSON.stringify(Object.fromEntries(new FormData(e.target))));dialog.close();toast('따뜻한 마음을 전했어요 ♥')};
