@@ -661,6 +661,27 @@
     /* remove hero venue label */
     .hero-venue{display:none!important}
 
+  
+    /* calendar photo card */
+    .calendar-photo-wrap{
+      width:82%;
+      margin:0 auto 34px;
+      opacity:0;
+      transform:translateY(20px) scale(.985);
+      transition:opacity .85s ease,transform .9s cubic-bezier(.22,1,.36,1);
+    }
+    .calendar-wrap.on .calendar-photo-wrap{
+      opacity:1;
+      transform:none;
+    }
+    .calendar-photo{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:22px;
+      box-shadow:0 12px 30px rgba(217,120,151,.12);
+    }
+
   </style>
 </head>
 <body>
@@ -696,13 +717,13 @@
       <article>
         <div class="profile-photo" data-photo-slot="profileA">PHOTO<small>사진 추가 예정</small></div>
         <h3 class="profile-name"><span data-a>정혜</span></h3>
-        <p class="profile-tags">유머러스함<br>고양이 광인</p>
+        <p class="profile-tags">ISFP<br>유머러스함<br>고양이 광인</p>
         <p class="profile-promise">햇살 같은 아내가<br>되겠습니다.</p>
       </article>
       <article>
         <div class="profile-photo" data-photo-slot="profileB">PHOTO<small>사진 추가 예정</small></div>
         <h3 class="profile-name"><span data-b>승현</span></h3>
-        <p class="profile-tags">진중함<br>애처가</p>
+        <p class="profile-tags">INTP<br>진중함<br>애처가</p>
         <p class="profile-promise">나무 같은 아내가<br>되겠습니다.</p>
       </article>
     </div>
@@ -710,6 +731,9 @@
 
   <section class="calendar-wrap reveal">
     <p class="section-label">Save the date</p>
+    <div class="calendar-photo-wrap">
+      <img class="calendar-photo" src="images/calendar_photo.webp" alt="두 사람의 브라이덜 샤워 사진" loading="lazy" />
+    </div>
     <h2 class="month">December 2022</h2>
     <p style="font-size:12px;color:rgba(255,255,255,.65)"><span data-date-long>2022년 12월 4일 일요일</span> · <span data-time>오전 11시</span></p>
     <div class="calendar" aria-label="2022년 12월 달력">
