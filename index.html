@@ -3,9 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="apple-touch-icon" href="images/favicon.png" />
+
   <meta name="theme-color" content="#f7f3ea" />
   <meta name="description" content="두 사람이 함께 써 내려갈 새로운 계절에 초대합니다." />
-  <title>정혜 & 승현의 결혼식</title>
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="정혜 & 승현의 결혼식" />
+  <meta property="og:description" content="두 사람이 함께 써 내려갈 새로운 계절에 초대합니다." />
+  <meta property="og:image" content="images/wedding-og.png" />
+  <meta property="og:image:alt" content="정혜와 승현의 웨딩 OG 이미지" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="정혜 & 승현의 결혼식" />
+  <meta name="twitter:description" content="두 사람이 함께 써 내려갈 새로운 계절에 초대합니다." />
+  <meta name="twitter:image" content="images/wedding-og.png" />
+
+  <title>정혜 ♥ 승현 | 2022.12.04</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Gowun+Batang:wght@400;700&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -844,7 +859,7 @@
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
     photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', gallery11:'images/gallery_11.webp', gallery12:'images/gallery_12.webp', gallery13:'images/gallery_13.webp', closing:'' }
   };
-  const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.querySelector('#accountA').textContent=CONFIG.accountA; document.querySelector('#accountB').textContent=CONFIG.accountB; document.title=`${CONFIG.personA} & ${CONFIG.personB}의 결혼식`;
+  const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.querySelector('#accountA').textContent=CONFIG.accountA; document.querySelector('#accountB').textContent=CONFIG.accountB; document.title=`${CONFIG.personA} ♥ ${CONFIG.personB} | 2022.12.04`;
   const encoded=encodeURIComponent(CONFIG.address); document.querySelector('#naverMap').href=`https://map.naver.com/p/search/${encoded}`; document.querySelector('#kakaoMap').href=`https://map.kakao.com/link/search/${encoded}`;
   Object.entries(CONFIG.photos).forEach(([key,src])=>{if(!src)return;const slot=document.querySelector(`[data-photo-slot="${key}"]`);if(!slot)return;slot.style.backgroundImage=`url("${src}")`;slot.style.backgroundSize='cover';slot.style.backgroundPosition='center';if(key==='closing'){const art=slot.querySelector('.closing-illustration');if(art)art.style.display='none'}else if(key!=='hero'){slot.textContent=''}});
   const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
