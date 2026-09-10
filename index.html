@@ -63,13 +63,17 @@
     dialog[open]{animation:dialogIn .28s cubic-bezier(.22,1,.36,1)}dialog[open]::backdrop{animation:backdropIn .28s ease}@keyframes dialogIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}@keyframes backdropIn{from{background:rgba(31,36,31,0);backdrop-filter:blur(0)}to{background:rgba(31,36,31,.58);backdrop-filter:blur(3px)}}
     .photo-slot{transition:transform .35s ease,filter .35s ease}.photo-slot:active{transform:scale(.985)}
     @media (min-width:700px){.page{margin:28px auto;border-radius:0}.bottom-bar{bottom:24px}}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.scroll:after,dialog[open],dialog[open]::backdrop{animation:none}.account-body,.photo-slot{transition:none}}
+  
+    /* 한복 메인 사진 구도 보정 */
+    .hero-photo{object-position:center 48%;}
+
   </style>
 </head>
 <body>
 <main class="page">
   <header class="hero" data-photo-slot="hero">
     <p class="eyebrow">Together is our favorite place</p>
-    <img class="hero-photo" src="images/hero.webp" alt="두 사람이 함께 촬영한 메인 커플 사진" />
+    <img class="hero-photo" src="images/hero_hanbok.webp" alt="두 사람이 함께 촬영한 메인 커플 사진" />
     <h1 class="title-en">We do,<br><i>our way.</i></h1>
     <p class="hero-names"><span data-a>하늘</span> <em style="color:var(--coral);font-style:normal">♥</em> <span data-b>다온</span></p>
     <p class="hero-date"><span data-date>2027. 05. 15. SAT</span> · <span data-time>오후 3시</span></p>
