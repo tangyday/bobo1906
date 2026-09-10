@@ -682,9 +682,58 @@
       box-shadow:0 12px 30px rgba(217,120,151,.12);
     }
 
+  
+    /* background music */
+    .music-toggle{
+      position:fixed;
+      z-index:35;
+      right:max(14px,calc((100vw - 420px)/2 + 14px));
+      top:max(16px,env(safe-area-inset-top));
+      width:42px;
+      height:42px;
+      border:1px solid rgba(255,255,255,.72);
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.78);
+      color:#d97897;
+      box-shadow:0 8px 24px rgba(70,45,55,.10);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      cursor:pointer;
+      transition:transform .2s ease,background .2s ease;
+    }
+    .music-toggle:active{transform:scale(.95)}
+    .music-toggle.playing{
+      background:rgba(255,240,246,.92);
+    }
+    .music-toggle .music-icon{
+      font-size:18px;
+      line-height:1;
+    }
+    .music-toggle.playing .music-icon{
+      animation:musicPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes musicPulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.12)}
+    }
+    @media (max-width:460px){
+      .music-toggle{right:14px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .music-toggle.playing .music-icon{animation:none}
+    }
+
   </style>
 </head>
 <body>
+
+<audio id="bgMusic" src="audio/wedding.mp3" preload="metadata" loop></audio>
+<button class="music-toggle" id="musicToggle" type="button" aria-label="배경음악 재생" aria-pressed="false">
+  <span class="music-icon" aria-hidden="true">♫</span>
+</button>
+
 <main class="page">
   <header class="hero" data-photo-slot="hero">
     <div class="hero-intro" id="heroIntro" aria-hidden="true">
@@ -831,17 +880,6 @@
   </section>
 
   <section class="rsvp reveal"><p class="section-label">Attendance</p><h2 class="section-title">참석 여부 전달</h2><p>소중한 시간을 내어 함께해 주시는 모든 분께 감사드립니다.<br>더 따뜻하게 맞이할 수 있도록 참석 여부와 동반 인원을 남겨주세요.</p><button class="btn dark" id="rsvpBtn">참석 여부 전달</button></section>
-
-  <section class="account reveal">
-    <p class="section-label">With love</p>
-    <h2 class="section-title">마음 전하실 곳</h2>
-    <p class="body-copy" style="font-size:13px">참석이 어려우신 분들을 위해<br>조심스러운 마음으로 안내드립니다.</p>
-    <div class="account-list">
-      <div class="account-item"><button class="account-head"><span><span data-a>정혜</span>에게</span><span>＋</span></button><div class="account-body"><p class="account-number" id="accountA">카카오뱅크 3333-01-1234567</p><button class="copy-btn" data-copy="accountA">계좌번호 복사하기</button></div></div>
-      <div class="account-item"><button class="account-head"><span><span data-b>승현</span>에게</span><span>＋</span></button><div class="account-body"><p class="account-number" id="accountB">토스뱅크 1000-2345-6789</p><button class="copy-btn" data-copy="accountB">계좌번호 복사하기</button></div></div>
-    </div>
-  </section>
-
   <section class="guestbook reveal">
     <p class="section-label">Guest book</p><h2 class="section-title">축하의 말</h2>
     <div class="guest-list" id="guestList">
@@ -883,7 +921,7 @@
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
     photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', gallery11:'images/gallery_11.webp', gallery12:'images/gallery_12.webp', gallery13:'images/gallery_13.webp', closing:'' }
   };
-  const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.querySelector('#accountA').textContent=CONFIG.accountA; document.querySelector('#accountB').textContent=CONFIG.accountB; document.title=`${CONFIG.personA} ♥ ${CONFIG.personB} | 2022.12.04`;
+  const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.title=`${CONFIG.personA} ♥ ${CONFIG.personB} | 2022.12.04`;
   const encoded=encodeURIComponent(CONFIG.address); document.querySelector('#naverMap').href=`https://map.naver.com/p/search/${encoded}`; document.querySelector('#kakaoMap').href=`https://map.kakao.com/link/search/${encoded}`;
   Object.entries(CONFIG.photos).forEach(([key,src])=>{if(!src)return;const slot=document.querySelector(`[data-photo-slot="${key}"]`);if(!slot)return;slot.style.backgroundImage=`url("${src}")`;slot.style.backgroundSize='cover';slot.style.backgroundPosition='center';if(key==='closing'){const art=slot.querySelector('.closing-illustration');if(art)art.style.display='none'}else if(key!=='hero'){slot.textContent=''}});
   const prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -923,8 +961,31 @@
   }
   tick();setInterval(tick,1000);
   const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.10,rootMargin:'0px 0px -8% 0px'});all('.reveal').forEach(e=>observer.observe(e));
-  all('.account-head').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open'))); const toast=(msg)=>{const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}; all('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{await navigator.clipboard.writeText(document.querySelector('#'+b.dataset.copy).textContent);toast('계좌번호를 복사했어요')}));
+  toast('계좌번호를 복사했어요')}));
 
+
+
+  const bgMusic=document.querySelector('#bgMusic');
+  const musicToggle=document.querySelector('#musicToggle');
+  if(bgMusic) bgMusic.volume=0.35;
+
+  async function toggleMusic(){
+    if(!bgMusic || !musicToggle) return;
+    if(bgMusic.paused){
+      try{
+        await bgMusic.play();
+        musicToggle.classList.add('playing');
+        musicToggle.setAttribute('aria-label','배경음악 일시정지');
+        musicToggle.setAttribute('aria-pressed','true');
+      }catch(e){}
+    }else{
+      bgMusic.pause();
+      musicToggle.classList.remove('playing');
+      musicToggle.setAttribute('aria-label','배경음악 재생');
+      musicToggle.setAttribute('aria-pressed','false');
+    }
+  }
+  musicToggle?.addEventListener('click',toggleMusic);
 
   const galleryGrid=document.querySelector('.gallery-grid');
   const galleryMoreBtn=document.querySelector('#galleryMoreBtn');
