@@ -500,6 +500,126 @@
       opacity:1;
     }
 
+  
+    /* gallery expanded to 10 photos */
+    .gallery-grid .photo-slot:nth-child(n+2){min-height:240px}
+    .reveal.on .gallery-grid .photo-slot:nth-child(6){transition-delay:.62s}
+    .reveal.on .gallery-grid .photo-slot:nth-child(7){transition-delay:.72s}
+    .reveal.on .gallery-grid .photo-slot:nth-child(8){transition-delay:.82s}
+    .reveal.on .gallery-grid .photo-slot:nth-child(9){transition-delay:.92s}
+    .reveal.on .gallery-grid .photo-slot:nth-child(10){transition-delay:1.02s}
+
+  
+    /* gallery lightbox */
+    .photo-slot{cursor:pointer;position:relative;overflow:hidden}
+    .photo-slot:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,rgba(255,255,255,0),rgba(25,20,23,.06));
+      opacity:0;
+      transition:opacity .25s ease;
+      pointer-events:none;
+    }
+    .photo-slot:hover:after,.photo-slot:active:after{opacity:1}
+    #galleryDialog{
+      max-width:min(92vw,520px);
+      width:min(92vw,520px);
+      background:transparent;
+      box-shadow:none;
+      overflow:visible;
+    }
+    #galleryDialog::backdrop{
+      background:rgba(15,12,14,.82);
+      backdrop-filter:blur(8px);
+    }
+    .gallery-modal{
+      position:relative;
+      display:grid;
+      gap:12px;
+      padding:0;
+      color:#fff;
+    }
+    .gallery-stage{
+      position:relative;
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.06);
+      box-shadow:0 16px 40px rgba(0,0,0,.28);
+      touch-action:pan-y;
+      user-select:none;
+      -webkit-user-select:none;
+    }
+    .gallery-stage img{
+      display:block;
+      width:100%;
+      max-height:78svh;
+      object-fit:contain;
+      background:#111;
+    }
+    .gallery-meta{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-size:11px;
+      letter-spacing:.16em;
+      color:rgba(255,255,255,.86);
+    }
+    .gallery-close,.gallery-nav{
+      position:absolute;
+      z-index:3;
+      border:0;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      background:rgba(18,15,17,.52);
+      color:#fff;
+      backdrop-filter:blur(10px);
+      box-shadow:0 8px 24px rgba(0,0,0,.18);
+    }
+    .gallery-close{
+      top:-14px;
+      right:-4px;
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      font-size:22px;
+      line-height:1;
+    }
+    .gallery-nav{
+      top:50%;
+      transform:translateY(-50%);
+      width:42px;
+      height:42px;
+      border-radius:999px;
+      font-size:22px;
+      line-height:1;
+    }
+    .gallery-prev{left:10px}
+    .gallery-next{right:10px}
+    .gallery-hint{
+      text-align:center;
+      font-size:10px;
+      letter-spacing:.08em;
+      color:rgba(255,255,255,.62);
+    }
+    @media (max-width:520px){
+      .gallery-close{top:10px;right:10px}
+      .gallery-nav{width:38px;height:38px}
+    }
+
+  
+    /* timeline photo: 원본 비율 유지 + 중앙 정렬 */
+    .moment-photo{
+      width:100%;
+      height:auto;
+      aspect-ratio:auto;
+      object-fit:contain;
+      object-position:center center;
+      background:#fff;
+    }
+
   </style>
 </head>
 <body>
@@ -572,12 +692,12 @@
       <h2 class="section-title" style="font-size:23px">우리가 우리가 되기까지</h2>
       <div class="timeline">
         <div class="moment">
-          <div class="year">2018</div>
+          <div class="year">2019</div>
           <div class="moment-copy">
             <h3>처음 만난 날</h3>
             <p>별일 없던 하루가 오래 기억할 날이 되었습니다.</p>
             <div class="moment-photo-wrap">
-              <img class="moment-photo" src="images/story_2018.webp" alt="2018년의 두 사람 사진" loading="lazy" />
+              <img class="moment-photo" src="images/story_2018.webp" alt="2019년의 두 사람 사진" loading="lazy" />
             </div>
           </div>
         </div>
@@ -614,6 +734,11 @@
       <div class="photo-slot" data-photo-slot="gallery3">PHOTO 03</div>
       <div class="photo-slot" data-photo-slot="gallery4">PHOTO 04</div>
       <div class="photo-slot" data-photo-slot="gallery5">PHOTO 05</div>
+      <div class="photo-slot" data-photo-slot="gallery6">PHOTO 06</div>
+      <div class="photo-slot" data-photo-slot="gallery7">PHOTO 07</div>
+      <div class="photo-slot" data-photo-slot="gallery8">PHOTO 08</div>
+      <div class="photo-slot" data-photo-slot="gallery9">PHOTO 09</div>
+      <div class="photo-slot" data-photo-slot="gallery10">PHOTO 10</div>
     </div>
   </section>
 
@@ -663,6 +788,22 @@
 
 <nav class="bottom-bar" aria-label="빠른 메뉴"><button class="btn" id="shareBtn">↗ 초대장 공유</button><button class="btn primary" id="bottomRsvp">♥ 참석 여부</button></nav>
 <div class="toast" id="toast" role="status">복사했습니다</div>
+
+<dialog id="galleryDialog" aria-label="갤러리 이미지 보기">
+  <div class="gallery-modal">
+    <button class="gallery-close" id="galleryClose" aria-label="닫기">×</button>
+    <div class="gallery-stage" id="galleryStage">
+      <button class="gallery-nav gallery-prev" id="galleryPrev" aria-label="이전 사진">‹</button>
+      <img id="galleryImage" alt="확대된 갤러리 사진" />
+      <button class="gallery-nav gallery-next" id="galleryNext" aria-label="다음 사진">›</button>
+    </div>
+    <div class="gallery-meta">
+      <span id="galleryCounter">1 / 10</span>
+    </div>
+    <p class="gallery-hint">좌우로 슬라이드하거나 화살표를 눌러 다음 사진으로 이동할 수 있어요.</p>
+  </div>
+</dialog>
+
 <dialog id="rsvpDialog"><div class="modal"><button class="close" id="closeDialog" aria-label="닫기">×</button><h2>참석 의사 전달</h2><p>이 예시 파일에서는 입력 내용이 기기에만 저장됩니다.<br>실제 접수용 구글폼 링크로 버튼을 연결해 사용해 주세요.</p><form class="form-grid" id="rsvpForm"><input name="name" placeholder="성함" required><select name="attendance" required><option value="">참석 여부를 선택해 주세요</option><option>기쁜 마음으로 참석할게요</option><option>아쉽지만 참석이 어려워요</option></select><input name="guests" inputmode="numeric" placeholder="동반 인원 (본인 포함)"><textarea name="message" placeholder="두 사람에게 축하 메시지"></textarea><button class="btn sage full" type="submit">마음 전하기</button></form></div></dialog>
 
 <script>
@@ -674,7 +815,7 @@
     venue: '보태니컬 하우스 2층 가든홀', address: '서울특별시 성동구 서울숲길 27',
     accountA: '카카오뱅크 3333-01-1234567', accountB: '토스뱅크 1000-2345-6789',
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
-    photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'', gallery2:'', gallery3:'', gallery4:'', gallery5:'', closing:'' }
+    photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', closing:'' }
   };
   const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.querySelector('#accountA').textContent=CONFIG.accountA; document.querySelector('#accountB').textContent=CONFIG.accountB; document.title=`${CONFIG.personA} & ${CONFIG.personB}의 결혼식`;
   const encoded=encodeURIComponent(CONFIG.address); document.querySelector('#naverMap').href=`https://map.naver.com/p/search/${encoded}`; document.querySelector('#kakaoMap').href=`https://map.kakao.com/link/search/${encoded}`;
@@ -717,6 +858,79 @@
   tick();setInterval(tick,1000);
   const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.10,rootMargin:'0px 0px -8% 0px'});all('.reveal').forEach(e=>observer.observe(e));
   all('.account-head').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open'))); const toast=(msg)=>{const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}; all('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{await navigator.clipboard.writeText(document.querySelector('#'+b.dataset.copy).textContent);toast('계좌번호를 복사했어요')}));
+
+  const galleryKeys=Object.keys(CONFIG.photos).filter(k=>/^gallery\d+$/.test(k) && CONFIG.photos[k]);
+  const galleryDialog=document.querySelector('#galleryDialog');
+  const galleryImage=document.querySelector('#galleryImage');
+  const galleryCounter=document.querySelector('#galleryCounter');
+  const galleryPrev=document.querySelector('#galleryPrev');
+  const galleryNext=document.querySelector('#galleryNext');
+  const galleryClose=document.querySelector('#galleryClose');
+  const galleryStage=document.querySelector('#galleryStage');
+  let currentGalleryIndex=0;
+  let touchStartX=0;
+  let touchEndX=0;
+
+  function renderGallery(index){
+    if(!galleryKeys.length) return;
+    currentGalleryIndex=(index+galleryKeys.length)%galleryKeys.length;
+    const key=galleryKeys[currentGalleryIndex];
+    galleryImage.src=CONFIG.photos[key];
+    galleryImage.alt=`갤러리 사진 ${currentGalleryIndex+1}`;
+    galleryCounter.textContent=`${currentGalleryIndex+1} / ${galleryKeys.length}`;
+  }
+  function openGallery(index){
+    renderGallery(index);
+    galleryDialog.showModal();
+  }
+  function nextGallery(){ renderGallery(currentGalleryIndex+1); }
+  function prevGallery(){ renderGallery(currentGalleryIndex-1); }
+
+  document.querySelectorAll('.gallery .photo-slot').forEach((slot,idx)=>{
+    slot.setAttribute('role','button');
+    slot.setAttribute('tabindex','0');
+    slot.addEventListener('click',()=>openGallery(idx));
+    slot.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter' || e.key===' '){
+        e.preventDefault();
+        openGallery(idx);
+      }
+    });
+  });
+
+  galleryPrev?.addEventListener('click',prevGallery);
+  galleryNext?.addEventListener('click',nextGallery);
+  galleryClose?.addEventListener('click',()=>galleryDialog.close());
+
+  galleryDialog?.addEventListener('click',(e)=>{
+    const rect=galleryDialog.getBoundingClientRect();
+    const clickedInside=(
+      e.clientX>=rect.left && e.clientX<=rect.right &&
+      e.clientY>=rect.top && e.clientY<=rect.bottom
+    );
+    if(!clickedInside) galleryDialog.close();
+  });
+
+  galleryStage?.addEventListener('touchstart',(e)=>{
+    touchStartX=e.changedTouches[0].clientX;
+  },{passive:true});
+
+  galleryStage?.addEventListener('touchend',(e)=>{
+    touchEndX=e.changedTouches[0].clientX;
+    const diff=touchEndX-touchStartX;
+    if(Math.abs(diff)>45){
+      if(diff<0) nextGallery();
+      else prevGallery();
+    }
+  },{passive:true});
+
+  window.addEventListener('keydown',(e)=>{
+    if(!galleryDialog?.open) return;
+    if(e.key==='ArrowRight') nextGallery();
+    if(e.key==='ArrowLeft') prevGallery();
+    if(e.key==='Escape') galleryDialog.close();
+  });
+
   const dialog=document.querySelector('#rsvpDialog'); const openDialog=()=>dialog.showModal(); document.querySelector('#rsvpBtn').onclick=openDialog;document.querySelector('#bottomRsvp').onclick=openDialog;document.querySelector('#closeDialog').onclick=()=>dialog.close();document.querySelector('#rsvpForm').onsubmit=e=>{e.preventDefault();localStorage.setItem('wedding-rsvp',JSON.stringify(Object.fromEntries(new FormData(e.target))));dialog.close();toast('따뜻한 마음을 전했어요 ♥')};
   document.querySelector('#shareBtn').onclick=async()=>{const data={title:document.title,text:`${CONFIG.personA} & ${CONFIG.personB}의 결혼식에 초대합니다`,url:location.href};if(navigator.share){try{await navigator.share(data)}catch(e){}}else{await navigator.clipboard.writeText(location.href);toast('초대장 주소를 복사했어요')}};
   document.querySelector('#calendarBtn').onclick=()=>{const start=new Date(CONFIG.weddingDate),end=new Date(start.getTime()+2*36e5),fmt=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${fmt(start)}\nDTEND:${fmt(end)}\nSUMMARY:${CONFIG.personA} & ${CONFIG.personB}의 결혼식\nLOCATION:${CONFIG.venue}, ${CONFIG.address}\nEND:VEVENT\nEND:VCALENDAR`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download='wedding.ics';a.click();URL.revokeObjectURL(a.href)};
