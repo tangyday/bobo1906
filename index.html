@@ -917,7 +917,6 @@
     weddingDate: '2022-12-04T11:00:00+09:00',
     dateText: '2022. 12. 04. SUN', dateLong: '2022년 12월 4일 일요일', timeText: '오전 11시',
     venue: '용산 리베르 스튜디오', address: '서울특별시 용산구 이촌로 5 9층',
-    accountA: '카카오뱅크 3333-01-1234567', accountB: '토스뱅크 1000-2345-6789',
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
     photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', gallery11:'images/gallery_11.webp', gallery12:'images/gallery_12.webp', gallery13:'images/gallery_13.webp', closing:'' }
   };
@@ -961,7 +960,7 @@
   }
   tick();setInterval(tick,1000);
   const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.10,rootMargin:'0px 0px -8% 0px'});all('.reveal').forEach(e=>observer.observe(e));
-  toast('계좌번호를 복사했어요')}));
+  const toast=(msg)=>{const t=document.querySelector('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)};
 
 
 
