@@ -797,6 +797,137 @@
       .heart-pop{animation:none;display:none}
     }
 
+    /* enhanced heart wish effect */
+    .heart-button{
+      width:82px;height:82px;margin:22px auto 0;
+      border:0;border-radius:50%;
+      display:grid;place-items:center;
+      background:#fff;
+      color:#e784a1;
+      box-shadow:0 12px 30px rgba(217,120,151,.16);
+      cursor:pointer;
+      position:relative;z-index:4;
+      transition:transform .18s ease,box-shadow .18s ease;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .heart-button:hover{box-shadow:0 16px 36px rgba(217,120,151,.22)}
+    .heart-button.beat{animation:heartBeat .52s cubic-bezier(.22,1,.36,1)}
+    .heart-button-icon{font-size:36px;line-height:1;display:block}
+    .heart-button.beat .heart-button-icon{
+      animation:heartIconPulse .52s cubic-bezier(.22,1,.36,1);
+    }
+
+    @keyframes heartBeat{
+      0%{transform:scale(1)}
+      28%{transform:scale(1.28)}
+      58%{transform:scale(.94)}
+      78%{transform:scale(1.08)}
+      100%{transform:scale(1)}
+    }
+    @keyframes heartIconPulse{
+      0%{transform:scale(1)}
+      35%{transform:scale(1.22)}
+      100%{transform:scale(1)}
+    }
+
+    .heart-pop{
+      position:absolute;
+      left:50%;
+      top:61%;
+      pointer-events:none;
+      z-index:3;
+      color:#e784a1;
+      opacity:0;
+      font-size:var(--size,18px);
+      transform:translate(-50%,-50%) scale(.45) rotate(0deg);
+      animation:heartFly var(--duration,1.35s) cubic-bezier(.18,.72,.25,1) forwards;
+      filter:drop-shadow(0 4px 7px rgba(217,120,151,.12));
+      will-change:transform,opacity;
+    }
+
+    @keyframes heartFly{
+      0%{
+        opacity:0;
+        transform:translate(-50%,-50%) scale(.45) rotate(0deg);
+      }
+      12%{
+        opacity:1;
+      }
+      48%{
+        opacity:1;
+        transform:
+          translate(calc(-50% + var(--x1)), calc(-50% + var(--y1)))
+          scale(var(--midScale,1.05))
+          rotate(var(--r1,0deg));
+      }
+      100%{
+        opacity:0;
+        transform:
+          translate(calc(-50% + var(--x2)), calc(-50% + var(--y2)))
+          scale(var(--endScale,.8))
+          rotate(var(--r2,0deg));
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      .heart-pop{display:none}
+      .heart-button.beat,.heart-button.beat .heart-button-icon{animation:none}
+    }
+
+    /* inline time capsule form */
+    .capsule-inline-form{
+      display:grid;
+      gap:10px;
+      margin:32px 0 8px;
+    }
+    .capsule-inline-form input,
+    .capsule-inline-form textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:#fffafd;
+      border-radius:8px;
+      padding:14px 15px;
+      font:inherit;
+      font-size:12px;
+      color:#4d474a;
+      outline:none;
+      transition:border-color .2s ease,box-shadow .2s ease;
+    }
+    .capsule-inline-form input:focus,
+    .capsule-inline-form textarea:focus{
+      border-color:#efbfd0;
+      box-shadow:0 0 0 3px rgba(232,140,168,.08);
+    }
+    .capsule-inline-form textarea{
+      height:115px;
+      resize:none;
+      line-height:1.7;
+    }
+    .capsule-inline-note{
+      margin:0 0 34px;
+      text-align:center;
+      font-size:9px;
+      color:#aaa;
+    }
+    .guest-actions{
+      display:flex;
+      justify-content:center;
+    }
+    .guest-actions #guestMore{
+      min-width:130px;
+    }
+
+    /* story card snapping */
+    #storyCards{
+      scroll-snap-type:x mandatory;
+      scroll-behavior:smooth;
+      overscroll-behavior-x:contain;
+    }
+    #storyCards .info-card{
+      scroll-snap-align:start;
+      scroll-snap-stop:always;
+    }
+
   </style>
 </head>
 <body>
@@ -981,8 +1112,18 @@
     <p class="section-label">TIME CAPSULE</p>
     <h2 class="section-title">우리에게 한마디를 남겨주세요.</h2>
     <p class="body-copy"><em>몇 년 뒤 다시 이 페이지를 열어보았을 때,</em><br><em>지금의 마음까지 함께 기억할 수 있도록</em><br><em>우리에게 한마디를 남겨주세요.</em></p>
+
+    <form class="capsule-inline-form" id="capsuleInlineForm">
+      <input name="name" maxlength="20" placeholder="이름 또는 별명" required>
+      <textarea name="message" maxlength="500" placeholder="우리에게 남길 한마디" required></textarea>
+      <button class="btn dark full" id="capsuleInlineSubmit" type="submit">타임캡슐에 담기</button>
+    </form>
+    <p class="capsule-inline-note">작성한 이름과 메시지는 이 페이지에 공개됩니다.</p>
+
     <div class="guest-list" id="guestList"><p class="capsule-empty">타임캡슐을 불러오는 중이에요.</p></div>
-    <div class="guest-actions"><button class="btn dark" id="guestWrite" type="button">타임캡슐 남기기</button><button class="btn" id="guestMore" type="button" hidden>모두 보기</button></div>
+    <div class="guest-actions">
+      <button class="btn" id="guestMore" type="button" hidden>모두 보기</button>
+    </div>
   </section>
 
   <section class="closing-photo reveal" data-photo-slot="closing"><img class="closing-illustration" src="images/closing_illustration.webp" alt="손을 잡고 웃고 있는 단발과 숏컷 단발의 두 신부 일러스트" /><div class="closing-copy"><span>AND THEY LIVED HAPPILY EVER AFTER</span><h2>저희 둘,<br>행복하게 잘 살겠습니다.</h2></div></section>
@@ -1013,7 +1154,7 @@
     <p>몇 년 뒤 다시 꺼내볼 수 있도록 소중히 담아둘게요.</p>
     <form class="form-grid" id="capsuleForm">
       <input name="name" maxlength="20" placeholder="이름 또는 별명" required>
-      <textarea name="message" maxlength="500" placeholder="몇 년 뒤의 우리에게 남길 한마디" required></textarea>
+      <textarea name="message" maxlength="500" placeholder="우리에게 남길 한마디" required></textarea>
       <button class="btn sage full" id="capsuleSubmit" type="submit">타임캡슐에 담기</button>
     </form>
     <p style="font-size:10px;color:#aaa;margin-top:10px">작성한 이름과 메시지는 이 페이지에 공개됩니다.</p>
@@ -1181,9 +1322,8 @@
   const dialog=document.querySelector('#rsvpDialog'); const openDialog=()=>dialog.showModal(); document.querySelector('#rsvpBtn').onclick=openDialog;document.querySelector('#bottomRsvp').onclick=openDialog;document.querySelector('#closeDialog').onclick=()=>dialog.close();document.querySelector('#rsvpForm').onsubmit=e=>{e.preventDefault();localStorage.setItem('wedding-rsvp',JSON.stringify(Object.fromEntries(new FormData(e.target))));dialog.close();toast('따뜻한 마음을 전했어요 ♥')};
   document.querySelector('#shareBtn').onclick=async()=>{const data={title:document.title,text:`${CONFIG.personA} & ${CONFIG.personB}의 결혼식에 초대합니다`,url:location.href};if(navigator.share){try{await navigator.share(data)}catch(e){}}else{await navigator.clipboard.writeText(location.href);toast('초대장 주소를 복사했어요')}};
   document.querySelector('#calendarBtn').onclick=()=>{const start=new Date(CONFIG.weddingDate),end=new Date(start.getTime()+2*36e5),fmt=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${fmt(start)}\nDTEND:${fmt(end)}\nSUMMARY:${CONFIG.personA} & ${CONFIG.personB}의 결혼식\nLOCATION:${CONFIG.venue}, ${CONFIG.address}\nEND:VEVENT\nEND:VCALENDAR`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download='wedding.ics';a.click();URL.revokeObjectURL(a.href)};
-  const capsuleDialog=document.querySelector('#capsuleDialog');
-  const capsuleForm=document.querySelector('#capsuleForm');
-  const capsuleSubmit=document.querySelector('#capsuleSubmit');
+  const capsuleInlineForm=document.querySelector('#capsuleInlineForm');
+  const capsuleInlineSubmit=document.querySelector('#capsuleInlineSubmit');
   const guestList=document.querySelector('#guestList');
   const guestMore=document.querySelector('#guestMore');
   let capsuleEntries=[],showAllCapsules=false;
@@ -1273,37 +1413,30 @@
     }
   }
 
-  document.querySelector('#guestWrite')?.addEventListener('click',()=>{
-    if(!capsuleApiReady()){toast('먼저 Apps Script 웹 앱 주소를 연결해 주세요');return}
-    capsuleDialog.showModal();
-  });
 
-  document.querySelector('#closeCapsuleDialog')?.addEventListener('click',()=>capsuleDialog.close());
-
-  capsuleForm?.addEventListener('submit',async(e)=>{
+  capsuleInlineForm?.addEventListener('submit',async(e)=>{
     e.preventDefault();
-    const fd=new FormData(capsuleForm);
+    const fd=new FormData(capsuleInlineForm);
     const name=String(fd.get('name')||'').trim();
     const message=String(fd.get('message')||'').trim();
     if(!name||!message)return;
 
-    capsuleSubmit.disabled=true;
-    capsuleSubmit.classList.add('capsule-submit-state');
-    capsuleSubmit.textContent='담는 중...';
+    capsuleInlineSubmit.disabled=true;
+    capsuleInlineSubmit.classList.add('capsule-submit-state');
+    capsuleInlineSubmit.textContent='담는 중...';
 
     try{
       await capsuleJsonp({action:'add',name,message});
-      capsuleForm.reset();
-      capsuleDialog.close();
+      capsuleInlineForm.reset();
       toast('타임캡슐에 마음을 담았어요 ♥');
       await loadCapsules();
     }catch(err){
       toast('저장하지 못했어요. Apps Script 배포를 확인해 주세요');
       console.error(err);
     }finally{
-      capsuleSubmit.disabled=false;
-      capsuleSubmit.classList.remove('capsule-submit-state');
-      capsuleSubmit.textContent='타임캡슐에 담기';
+      capsuleInlineSubmit.disabled=false;
+      capsuleInlineSubmit.classList.remove('capsule-submit-state');
+      capsuleInlineSubmit.textContent='타임캡슐에 담기';
     }
   });
 
@@ -1322,26 +1455,46 @@
   heartWishBtn?.addEventListener('click',()=>{
     if(!heartWishSection) return;
 
-    const hearts=12;
+    // 중앙 하트가 크게 두근하고 다시 원래 크기로
+    heartWishBtn.classList.remove('beat');
+    void heartWishBtn.offsetWidth;
+    heartWishBtn.classList.add('beat');
+    setTimeout(()=>heartWishBtn.classList.remove('beat'),560);
+
+    // 작은 하트들이 위쪽으로 각기 다른 곡선으로 날아감
+    const hearts=18;
+
     for(let i=0;i<hearts;i++){
       const heart=document.createElement('span');
       heart.className='heart-pop';
       heart.textContent='♥';
 
-      const angle=(Math.PI*2/hearts)*i + (Math.random()*.35);
-      const distance=55 + Math.random()*70;
-      const x=Math.cos(angle)*distance;
-      const y=Math.sin(angle)*distance - 35;
+      const x1=(Math.random()*90)-45;
+      const x2=(Math.random()*180)-90;
+      const y1=-(45+Math.random()*70);
+      const y2=-(135+Math.random()*150);
 
-      heart.style.setProperty('--x',`${x}px`);
-      heart.style.setProperty('--y',`${y}px`);
-      heart.style.setProperty('--s',`${0.7+Math.random()*1.1}`);
-      heart.style.left=`${50+(Math.random()*4-2)}%`;
-      heart.style.top=`${59+(Math.random()*3-1.5)}%`;
-      heart.style.animationDelay=`${Math.random()*.12}s`;
+      const size=12+Math.random()*15;
+      const duration=1.05+Math.random()*.65;
+      const rotation1=(Math.random()*40)-20;
+      const rotation2=(Math.random()*100)-50;
+      const midScale=.85+Math.random()*.7;
+      const endScale=.55+Math.random()*.55;
+
+      heart.style.setProperty('--x1',`${x1}px`);
+      heart.style.setProperty('--x2',`${x2}px`);
+      heart.style.setProperty('--y1',`${y1}px`);
+      heart.style.setProperty('--y2',`${y2}px`);
+      heart.style.setProperty('--size',`${size}px`);
+      heart.style.setProperty('--duration',`${duration}s`);
+      heart.style.setProperty('--r1',`${rotation1}deg`);
+      heart.style.setProperty('--r2',`${rotation2}deg`);
+      heart.style.setProperty('--midScale',midScale);
+      heart.style.setProperty('--endScale',endScale);
+      heart.style.animationDelay=`${Math.random()*.16}s`;
 
       heartWishSection.appendChild(heart);
-      setTimeout(()=>heart.remove(),1400);
+      setTimeout(()=>heart.remove(),1900);
     }
   });
 
@@ -1350,16 +1503,46 @@
   const storyPrev=document.querySelector('#storyPrev');
   const storyNext=document.querySelector('#storyNext');
 
-  function scrollStory(direction){
-    if(!storyCards) return;
-    const card=storyCards.querySelector('.info-card');
-    const gap=12;
-    const amount=(card?.getBoundingClientRect().width || storyCards.clientWidth*.84)+gap;
-    storyCards.scrollBy({left:direction*amount,behavior:'smooth'});
+  function getStoryCardIndex(){
+    if(!storyCards) return 0;
+    const cards=[...storyCards.querySelectorAll('.info-card')];
+    if(!cards.length) return 0;
+
+    const containerLeft=storyCards.getBoundingClientRect().left;
+    let index=0;
+    let minDistance=Infinity;
+
+    cards.forEach((card,i)=>{
+      const distance=Math.abs(card.getBoundingClientRect().left-containerLeft);
+      if(distance<minDistance){
+        minDistance=distance;
+        index=i;
+      }
+    });
+    return index;
   }
 
-  storyPrev?.addEventListener('click',()=>scrollStory(-1));
-  storyNext?.addEventListener('click',()=>scrollStory(1));
+  function goToStoryCard(index){
+    if(!storyCards) return;
+    const cards=[...storyCards.querySelectorAll('.info-card')];
+    if(!cards.length) return;
+
+    const targetIndex=Math.max(0,Math.min(index,cards.length-1));
+    const target=cards[targetIndex];
+
+    storyCards.scrollTo({
+      left:target.offsetLeft-storyCards.offsetLeft,
+      behavior:'smooth'
+    });
+  }
+
+  storyPrev?.addEventListener('click',()=>{
+    goToStoryCard(getStoryCardIndex()-1);
+  });
+
+  storyNext?.addEventListener('click',()=>{
+    goToStoryCard(getStoryCardIndex()+1);
+  });
 
 </script>
 </body>
