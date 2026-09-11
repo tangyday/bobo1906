@@ -1388,14 +1388,46 @@
     });
   }
 
+
+  async function capsuleFetch(params={}, method='GET'){
+    if(!capsuleApiReady()) throw new Error('웹 앱 URL이 연결되지 않았습니다.');
+
+    if(method==='GET'){
+      const qs=new URLSearchParams({...params,_:Date.now()});
+      const res=await fetch(`${CONFIG.timeCapsuleWebAppUrl}?${qs.toString()}`,{
+        method:'GET',
+        cache:'no-store'
+      });
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }
+
+    const body=new URLSearchParams(params);
+    const res=await fetch(CONFIG.timeCapsuleWebAppUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body
+    });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  }
+
   async function loadCapsules(){
     if(!capsuleApiReady()){renderCapsules();return}
     try{
-      const data=await capsuleJsonp({action:'list'});
+      let data;
+      try{
+        data=await capsuleJsonp({action:'list'});
+      }catch(jsonpErr){
+        console.warn('JSONP 목록 조회 실패, fetch 방식으로 재시도합니다.',jsonpErr);
+        data=await capsuleFetch({action:'list'},'GET');
+      }
+
+      if(!data || !data.ok) throw new Error((data&&data.error)||'load failed');
       capsuleEntries=Array.isArray(data.items)?data.items:[];
       renderCapsules();
     }catch(err){
-      guestList.innerHTML='<p class="capsule-empty">타임캡슐을 불러오지 못했어요. Apps Script 배포 버전을 확인해 주세요.</p>';
+      guestList.innerHTML='<p class="capsule-empty">타임캡슐을 불러오지 못했어요. Apps Script 배포 또는 접근 권한을 확인해 주세요.</p>';
       guestMore.hidden=true;
       console.error(err);
     }
@@ -1417,7 +1449,13 @@
     capsuleSubmit.classList.add('capsule-submit-state');
     capsuleSubmit.textContent='담는 중...';
     try{
-      await capsuleJsonp({action:'add',name,message});
+      try{
+        await capsuleJsonp({action:'add',name,message});
+      }catch(jsonpErr){
+        console.warn('JSONP 저장 실패, fetch 방식으로 재시도합니다.',jsonpErr);
+        const data=await capsuleFetch({action:'add',name,message},'POST');
+        if(!data || !data.ok) throw new Error((data&&data.error)||'save failed');
+      }
       capsuleForm.reset();
       capsuleDialog?.close();
       toast('타임캡슐에 마음을 담았어요 ♥');
