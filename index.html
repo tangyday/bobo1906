@@ -928,6 +928,17 @@
       scroll-snap-stop:always;
     }
 
+    /* time capsule popup layout */
+    .capsule-open-btn{display:flex;margin:30px auto 34px;min-width:150px}
+    .guest-list{margin-top:0}
+    .guest-actions{display:flex;justify-content:center;margin-top:20px}
+    .guest-actions #guestMore{min-width:120px}
+    #capsuleDialog textarea{height:130px;line-height:1.7}
+
+    /* stronger story horizontal behavior */
+    #storyCards{overflow-x:auto!important;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+    #storyCards .info-card{scroll-snap-align:center;scroll-snap-stop:always;flex:0 0 84%}
+
   </style>
 </head>
 <body>
@@ -1113,16 +1124,11 @@
     <h2 class="section-title">우리에게 한마디를 남겨주세요.</h2>
     <p class="body-copy"><em>몇 년 뒤 다시 이 페이지를 열어보았을 때,</em><br><em>지금의 마음까지 함께 기억할 수 있도록</em><br><em>우리에게 한마디를 남겨주세요.</em></p>
 
-    <form class="capsule-inline-form" id="capsuleInlineForm">
-      <input name="name" maxlength="20" placeholder="이름 또는 별명" required>
-      <textarea name="message" maxlength="500" placeholder="우리에게 남길 한마디" required></textarea>
-      <button class="btn dark full" id="capsuleInlineSubmit" type="submit">타임캡슐에 담기</button>
-    </form>
-    <p class="capsule-inline-note">작성한 이름과 메시지는 이 페이지에 공개됩니다.</p>
+    <button class="btn dark capsule-open-btn" id="guestWrite" type="button">타임캡슐 남기기</button>
 
     <div class="guest-list" id="guestList"><p class="capsule-empty">타임캡슐을 불러오는 중이에요.</p></div>
     <div class="guest-actions">
-      <button class="btn" id="guestMore" type="button" hidden>모두 보기</button>
+      <button class="btn" id="guestMore" type="button" hidden>더보기</button>
     </div>
   </section>
 
@@ -1130,7 +1136,7 @@
   <footer><div class="footer-heart">♥</div><h2 class="footer-title"><span data-a>정혜</span> & <span data-b>승현</span></h2><p class="footer-copy">THANK YOU FOR CELEBRATING WITH US</p></footer>
 </main>
 
-<nav class="bottom-bar" aria-label="빠른 메뉴"><button class="btn" id="shareBtn">↗ 초대장 공유</button><button class="btn primary" id="bottomRsvp">♥ 참석 여부</button></nav>
+<nav class="bottom-bar" aria-label="빠른 메뉴"><button class="btn" id="shareBtn">↗ 초대장 공유</button><button class="btn primary" id="bottomHeart">♥ 하트 누르기</button></nav>
 <div class="toast" id="toast" role="status">복사했습니다</div>
 
 <dialog id="galleryDialog" aria-label="갤러리 이미지 보기">
@@ -1319,13 +1325,17 @@
     if(e.key==='Escape') galleryDialog.close();
   });
 
-  const dialog=document.querySelector('#rsvpDialog'); const openDialog=()=>dialog.showModal(); document.querySelector('#rsvpBtn').onclick=openDialog;document.querySelector('#bottomRsvp').onclick=openDialog;document.querySelector('#closeDialog').onclick=()=>dialog.close();document.querySelector('#rsvpForm').onsubmit=e=>{e.preventDefault();localStorage.setItem('wedding-rsvp',JSON.stringify(Object.fromEntries(new FormData(e.target))));dialog.close();toast('따뜻한 마음을 전했어요 ♥')};
+  const dialog=document.querySelector('#rsvpDialog');
+  document.querySelector('#closeDialog')?.addEventListener('click',()=>dialog?.close());
+  document.querySelector('#rsvpForm')?.addEventListener('submit',e=>{e.preventDefault();dialog?.close();});
   document.querySelector('#shareBtn').onclick=async()=>{const data={title:document.title,text:`${CONFIG.personA} & ${CONFIG.personB}의 결혼식에 초대합니다`,url:location.href};if(navigator.share){try{await navigator.share(data)}catch(e){}}else{await navigator.clipboard.writeText(location.href);toast('초대장 주소를 복사했어요')}};
   document.querySelector('#calendarBtn').onclick=()=>{const start=new Date(CONFIG.weddingDate),end=new Date(start.getTime()+2*36e5),fmt=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${fmt(start)}\nDTEND:${fmt(end)}\nSUMMARY:${CONFIG.personA} & ${CONFIG.personB}의 결혼식\nLOCATION:${CONFIG.venue}, ${CONFIG.address}\nEND:VEVENT\nEND:VCALENDAR`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download='wedding.ics';a.click();URL.revokeObjectURL(a.href)};
-  const capsuleInlineForm=document.querySelector('#capsuleInlineForm');
-  const capsuleInlineSubmit=document.querySelector('#capsuleInlineSubmit');
+  const capsuleDialog=document.querySelector('#capsuleDialog');
+  const capsuleForm=document.querySelector('#capsuleForm');
+  const capsuleSubmit=document.querySelector('#capsuleSubmit');
   const guestList=document.querySelector('#guestList');
   const guestMore=document.querySelector('#guestMore');
+  const guestWrite=document.querySelector('#guestWrite');
   let capsuleEntries=[],showAllCapsules=false;
   const capsuleApiReady=()=>CONFIG.timeCapsuleWebAppUrl.startsWith('https://script.google.com/macros/s/');
 
@@ -1339,15 +1349,14 @@
     if(!capsuleEntries.length){
       const p=document.createElement('p');
       p.className='capsule-empty';
-      p.textContent=capsuleApiReady()
-        ? '아직 담긴 마음이 없어요. 첫 타임캡슐을 남겨주세요 ♥'
-        : 'Apps Script 웹 앱 주소를 연결하면 여기에 글이 누적돼요.';
+      p.textContent=capsuleApiReady()?'아직 담긴 마음이 없어요. 첫 타임캡슐을 남겨주세요 ♥':'Apps Script 웹 앱 주소를 연결하면 여기에 글이 누적돼요.';
       guestList.appendChild(p);
       guestMore.hidden=true;
       return;
     }
 
-    (showAllCapsules?capsuleEntries:capsuleEntries.slice(0,5)).forEach(entry=>{
+    const visible=showAllCapsules ? capsuleEntries : capsuleEntries.slice(0,3);
+    visible.forEach(entry=>{
       const item=document.createElement('article');
       item.className='guest-message';
       const strong=document.createElement('strong');
@@ -1360,42 +1369,21 @@
       guestList.appendChild(item);
     });
 
-    guestMore.hidden=capsuleEntries.length<=5;
-    if(!guestMore.hidden){
-      guestMore.textContent=showAllCapsules?'접어보기':`모두 보기 (${capsuleEntries.length})`;
-    }
+    guestMore.hidden=capsuleEntries.length<=3;
+    if(!guestMore.hidden) guestMore.textContent=showAllCapsules?'접어보기':`더보기 (${capsuleEntries.length-3})`;
   }
 
-  /* Apps Script와의 통신을 JSONP로 처리해 GitHub Pages/모바일의 CORS 문제를 피합니다. */
   function capsuleJsonp(params={}){
     return new Promise((resolve,reject)=>{
       if(!capsuleApiReady()) return reject(new Error('웹 앱 URL이 연결되지 않았습니다.'));
-
       const callback='capsuleCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
       const script=document.createElement('script');
-      const timer=setTimeout(()=>{
-        cleanup();
-        reject(new Error('타임캡슐 서버 응답 시간이 초과됐습니다.'));
-      },12000);
-
-      function cleanup(){
-        clearTimeout(timer);
-        script.remove();
-        try{delete window[callback]}catch(e){window[callback]=undefined}
-      }
-
-      window[callback]=(data)=>{
-        cleanup();
-        if(data && data.ok) resolve(data);
-        else reject(new Error((data&&data.error)||'타임캡슐 처리에 실패했습니다.'));
-      };
-
+      const timer=setTimeout(()=>{cleanup();reject(new Error('타임캡슐 서버 응답 시간이 초과됐습니다.'));},12000);
+      function cleanup(){clearTimeout(timer);script.remove();try{delete window[callback]}catch(e){window[callback]=undefined}}
+      window[callback]=(data)=>{cleanup();data&&data.ok?resolve(data):reject(new Error((data&&data.error)||'타임캡슐 처리에 실패했습니다.'));};
       const qs=new URLSearchParams({...params,callback,_:Date.now()});
       script.src=`${CONFIG.timeCapsuleWebAppUrl}?${qs.toString()}`;
-      script.onerror=()=>{
-        cleanup();
-        reject(new Error('타임캡슐 서버에 연결하지 못했습니다.'));
-      };
+      script.onerror=()=>{cleanup();reject(new Error('타임캡슐 서버에 연결하지 못했습니다.'));};
       document.body.appendChild(script);
     });
   }
@@ -1413,38 +1401,38 @@
     }
   }
 
+  guestWrite?.addEventListener('click',()=>{
+    if(!capsuleApiReady()){toast('먼저 Apps Script 웹 앱 주소를 연결해 주세요');return}
+    capsuleDialog?.showModal();
+  });
+  document.querySelector('#closeCapsuleDialog')?.addEventListener('click',()=>capsuleDialog?.close());
 
-  capsuleInlineForm?.addEventListener('submit',async(e)=>{
+  capsuleForm?.addEventListener('submit',async(e)=>{
     e.preventDefault();
-    const fd=new FormData(capsuleInlineForm);
+    const fd=new FormData(capsuleForm);
     const name=String(fd.get('name')||'').trim();
     const message=String(fd.get('message')||'').trim();
     if(!name||!message)return;
-
-    capsuleInlineSubmit.disabled=true;
-    capsuleInlineSubmit.classList.add('capsule-submit-state');
-    capsuleInlineSubmit.textContent='담는 중...';
-
+    capsuleSubmit.disabled=true;
+    capsuleSubmit.classList.add('capsule-submit-state');
+    capsuleSubmit.textContent='담는 중...';
     try{
       await capsuleJsonp({action:'add',name,message});
-      capsuleInlineForm.reset();
+      capsuleForm.reset();
+      capsuleDialog?.close();
       toast('타임캡슐에 마음을 담았어요 ♥');
       await loadCapsules();
     }catch(err){
       toast('저장하지 못했어요. Apps Script 배포를 확인해 주세요');
       console.error(err);
     }finally{
-      capsuleInlineSubmit.disabled=false;
-      capsuleInlineSubmit.classList.remove('capsule-submit-state');
-      capsuleInlineSubmit.textContent='타임캡슐에 담기';
+      capsuleSubmit.disabled=false;
+      capsuleSubmit.classList.remove('capsule-submit-state');
+      capsuleSubmit.textContent='타임캡슐에 담기';
     }
   });
 
-  guestMore?.addEventListener('click',()=>{
-    showAllCapsules=!showAllCapsules;
-    renderCapsules();
-  });
-
+  guestMore?.addEventListener('click',()=>{showAllCapsules=!showAllCapsules;renderCapsules();});
   loadCapsules();
 
 
@@ -1502,46 +1490,30 @@
   const storyCards=document.querySelector('#storyCards');
   const storyPrev=document.querySelector('#storyPrev');
   const storyNext=document.querySelector('#storyNext');
+  let storyIndex=0;
 
-  function getStoryCardIndex(){
-    if(!storyCards) return 0;
-    const cards=[...storyCards.querySelectorAll('.info-card')];
-    if(!cards.length) return 0;
-
-    const containerLeft=storyCards.getBoundingClientRect().left;
-    let index=0;
-    let minDistance=Infinity;
-
-    cards.forEach((card,i)=>{
-      const distance=Math.abs(card.getBoundingClientRect().left-containerLeft);
-      if(distance<minDistance){
-        minDistance=distance;
-        index=i;
-      }
-    });
-    return index;
+  function storyItems(){return storyCards?[...storyCards.querySelectorAll('.info-card')]:[]}
+  function goStory(index){
+    const cards=storyItems();
+    if(!cards.length)return;
+    storyIndex=Math.max(0,Math.min(index,cards.length-1));
+    const target=cards[storyIndex];
+    storyCards.scrollTo({left:target.offsetLeft-storyCards.offsetLeft,behavior:'smooth'});
   }
+  storyPrev?.addEventListener('click',()=>goStory(storyIndex-1));
+  storyNext?.addEventListener('click',()=>goStory(storyIndex+1));
+  storyCards?.addEventListener('scroll',()=>{
+    const cards=storyItems();
+    if(!cards.length)return;
+    let best=0,dist=Infinity;
+    cards.forEach((card,i)=>{const d=Math.abs((card.offsetLeft-storyCards.offsetLeft)-storyCards.scrollLeft);if(d<dist){dist=d;best=i;}});
+    storyIndex=best;
+  },{passive:true});
 
-  function goToStoryCard(index){
-    if(!storyCards) return;
-    const cards=[...storyCards.querySelectorAll('.info-card')];
-    if(!cards.length) return;
-
-    const targetIndex=Math.max(0,Math.min(index,cards.length-1));
-    const target=cards[targetIndex];
-
-    storyCards.scrollTo({
-      left:target.offsetLeft-storyCards.offsetLeft,
-      behavior:'smooth'
-    });
-  }
-
-  storyPrev?.addEventListener('click',()=>{
-    goToStoryCard(getStoryCardIndex()-1);
-  });
-
-  storyNext?.addEventListener('click',()=>{
-    goToStoryCard(getStoryCardIndex()+1);
+  /* bottom heart shortcut */
+  document.querySelector('#bottomHeart')?.addEventListener('click',()=>{
+    document.querySelector('.heart-wish')?.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>document.querySelector('#heartWishBtn')?.click(),450);
   });
 
 </script>
