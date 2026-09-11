@@ -1450,17 +1450,17 @@
     setTimeout(()=>heartWishBtn.classList.remove('beat'),560);
 
     // 작은 하트들이 위쪽으로 각기 다른 곡선으로 날아감
-    const hearts=18;
+    const hearts=9;
 
     for(let i=0;i<hearts;i++){
       const heart=document.createElement('span');
       heart.className='heart-pop';
       heart.textContent='♥';
 
-      const x1=(Math.random()*90)-45;
-      const x2=(Math.random()*180)-90;
-      const y1=-(45+Math.random()*70);
-      const y2=-(135+Math.random()*150);
+      const x1=(Math.random()*60)-30;
+      const x2=(Math.random()*110)-55;
+      const y1=-(40+Math.random()*45);
+      const y2=-(110+Math.random()*90);
 
       const size=12+Math.random()*15;
       const duration=1.05+Math.random()*.65;
@@ -1482,7 +1482,7 @@
       heart.style.animationDelay=`${Math.random()*.16}s`;
 
       heartWishSection.appendChild(heart);
-      setTimeout(()=>heart.remove(),1900);
+      setTimeout(()=>heart.remove(),1600);
     }
   });
 
