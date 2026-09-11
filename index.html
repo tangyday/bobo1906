@@ -725,6 +725,78 @@
       .music-toggle.playing .music-icon{animation:none}
     }
 
+    /* time capsule */
+    .guestbook .body-copy{margin-bottom:34px}
+    .guest-message p{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+    .capsule-empty{margin:26px 0 0;text-align:center;font-size:11px;line-height:1.8;color:#aaa}
+    .guest-actions .btn[hidden]{display:none}
+    #capsuleDialog textarea{height:130px;line-height:1.7}
+    .capsule-submit-state{opacity:.65;pointer-events:none}
+
+    /* our little story */
+    .info-card{position:relative}
+    .info-nav{
+      margin-top:22px;
+      display:flex;align-items:center;justify-content:center;
+      gap:12px;color:#c996a6;
+    }
+    .info-arrow{
+      width:30px;height:30px;padding:0;
+      display:grid;place-items:center;
+      border:1px solid #f0dfe5;
+      border-radius:50%;
+      background:#fff;
+      color:#9d7d87;
+      font-size:14px;
+      line-height:1;
+      cursor:pointer;
+      transition:transform .2s ease,background .2s ease;
+    }
+    .info-arrow:active{transform:scale(.94)}
+    .info-arrow:hover{background:#fff6f9}
+    .info-nav-dot{font-size:10px;color:#e5c5cf}
+
+    /* heart wish */
+    .heart-wish{position:relative;overflow:hidden}
+    .heart-button{
+      width:78px;height:78px;margin:22px auto 0;
+      border:0;border-radius:50%;
+      display:grid;place-items:center;
+      background:#fff;
+      color:#e784a1;
+      box-shadow:0 12px 30px rgba(217,120,151,.16);
+      cursor:pointer;
+      position:relative;z-index:2;
+      transition:transform .18s ease,box-shadow .18s ease;
+    }
+    .heart-button:active{transform:scale(.92)}
+    .heart-button:hover{box-shadow:0 14px 34px rgba(217,120,151,.22)}
+    .heart-button-icon{font-size:34px;line-height:1}
+    .heart-caption{margin-top:14px!important;font-size:10px!important;color:#a98390!important}
+    .heart-pop{
+      position:absolute;
+      left:50%;top:50%;
+      pointer-events:none;
+      z-index:3;
+      font-size:18px;
+      color:#e784a1;
+      opacity:0;
+      animation:heartPop 1.15s cubic-bezier(.22,1,.36,1) forwards;
+      transform:translate(-50%,-50%) scale(.65);
+      text-shadow:0 3px 10px rgba(217,120,151,.12);
+    }
+    @keyframes heartPop{
+      0%{opacity:0;transform:translate(-50%,-35%) scale(.55)}
+      15%{opacity:1}
+      100%{
+        opacity:0;
+        transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(var(--s));
+      }
+    }
+    @media (prefers-reduced-motion:reduce){
+      .heart-pop{animation:none;display:none}
+    }
+
   </style>
 </head>
 <body>
@@ -861,32 +933,56 @@
   </section>
 
   <section class="location reveal">
-    <p class="section-label">Location</p>
-    <h2 class="section-title">오시는 길</h2>
+    <p class="section-label">Our little wedding</p>
+    <h2 class="section-title">우리만의 결혼식</h2>
     <div class="venue-card">
       <div class="map-art embed"><iframe class="map-frame" title="용산 리베르 스튜디오 위치 지도" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%9A%A9%EC%82%B0%EA%B5%AC%20%EC%9D%B4%EC%B4%8C%EB%A1%9C%205%209%EC%B8%B5&output=embed"></iframe></div>
       <div class="venue-info"><p class="venue-name" data-venue>용산 리베르 스튜디오</p><p class="venue-address" data-address>서울특별시 용산구 이촌로 5 9층</p><div class="button-row"><a class="btn" id="naverMap" target="_blank" rel="noopener">네이버 지도</a><a class="btn" id="kakaoMap" target="_blank" rel="noopener">카카오맵</a></div></div>
     </div>
-    <div class="notice"><strong>오시는 길 안내</strong><br>예식 장소는 <strong>용산 리베르 스튜디오</strong>이며, 서울특별시 용산구 이촌로 5, 9층에 위치해 있습니다.<br></div>
   </section>
 
   <section class="wedding-info reveal">
-    <p class="section-label" style="text-align:center">Wedding information</p>
-    <div class="info-scroll">
-      <article class="info-card"><span class="info-no">01</span><h3>포토부스</h3><p>소중한 날을 오래 기억할 수 있도록<br>포토부스를 준비할 예정입니다.<br>두 사람과 함께 사진을 남겨주세요.</p></article>
-      <article class="info-card"><span class="info-no">02</span><h3>주차 안내</h3><p>예식장 주차장을 이용하실 수 있습니다.<br>혼잡할 수 있으니 여유 있게<br>도착해 주시면 감사하겠습니다.</p></article>
-      <article class="info-card"><span class="info-no">03</span><h3>드레스 코드</h3><p>정해진 드레스 코드는 없습니다.<br>가장 편안하고 아름다운 모습으로<br>함께 즐겨주세요.</p></article>
+    <p class="section-label" style="text-align:center">Our little story</p>
+    <h2 class="section-title">우리의 작은 이야기</h2>
+    <div class="info-scroll" id="storyCards">
+      <article class="info-card">
+        <span class="info-no">01</span>
+        <h3>우리가 만난 날</h3>
+        <p>2019년 6월 6일 현충일<br>어린이대공원에서<br>첫 만남에 바이킹 타기</p>
+      </article>
+      <article class="info-card">
+        <span class="info-no">02</span>
+        <h3>같이 제일 많이 한 것</h3>
+        <p>카페 투어,<br>이상한 춤추고 노래하기,<br>바다 보러가기</p>
+      </article>
+      <article class="info-card">
+        <span class="info-no">03</span>
+        <h3>앞으로 하고 싶은 것</h3>
+        <p>코코나나랑 넷이 지금처럼<br>건강하고 행복하기,<br>같이 일본 여행가기,<br>부자 되기!</p>
+      </article>
+    </div>
+    <div class="info-nav" aria-label="우리의 작은 이야기 카드 이동">
+      <button class="info-arrow" id="storyPrev" type="button" aria-label="이전 카드">←</button>
+      <span class="info-nav-dot">•</span>
+      <button class="info-arrow" id="storyNext" type="button" aria-label="다음 카드">→</button>
     </div>
   </section>
 
-  <section class="rsvp reveal"><p class="section-label">Attendance</p><h2 class="section-title">참석 여부 전달</h2><p>소중한 시간을 내어 함께해 주시는 모든 분께 감사드립니다.<br>더 따뜻하게 맞이할 수 있도록 참석 여부와 동반 인원을 남겨주세요.</p><button class="btn dark" id="rsvpBtn">참석 여부 전달</button></section>
+  <section class="rsvp reveal heart-wish">
+    <p class="section-label">LOVE WISH</p>
+    <h2 class="section-title">우리 모두의 행복을 기원하며</h2>
+    <p>지금 이 순간의 마음을 담아<br>하트를 한 번 눌러주세요.</p>
+    <button class="heart-button" id="heartWishBtn" type="button" aria-label="행복을 기원하며 하트 누르기">
+      <span class="heart-button-icon" aria-hidden="true">♥</span>
+    </button>
+    <p class="heart-caption">하트를 누르면 마음만 살짝 뿅 ♥</p>
+  </section>
   <section class="guestbook reveal">
-    <p class="section-label">Guest book</p><h2 class="section-title">축하의 말</h2>
-    <div class="guest-list" id="guestList">
-      <article class="guest-message"><strong>오랜 친구</strong><time>2027.05.01</time><p>두 사람의 새로운 시작을 진심으로 축하해!</p></article>
-      <article class="guest-message"><strong>사랑하는 가족</strong><time>2027.04.28</time><p>지금처럼 서로 아끼며 오래오래 행복하길.</p></article>
-    </div>
-    <div class="guest-actions"><button class="btn" id="guestWrite">축하글 작성</button><button class="btn" id="guestMore">전체보기</button></div>
+    <p class="section-label">TIME CAPSULE</p>
+    <h2 class="section-title">우리에게 한마디를 남겨주세요.</h2>
+    <p class="body-copy"><em>몇 년 뒤 다시 이 페이지를 열어보았을 때,</em><br><em>지금의 마음까지 함께 기억할 수 있도록</em><br><em>우리에게 한마디를 남겨주세요.</em></p>
+    <div class="guest-list" id="guestList"><p class="capsule-empty">타임캡슐을 불러오는 중이에요.</p></div>
+    <div class="guest-actions"><button class="btn dark" id="guestWrite" type="button">타임캡슐 남기기</button><button class="btn" id="guestMore" type="button" hidden>모두 보기</button></div>
   </section>
 
   <section class="closing-photo reveal" data-photo-slot="closing"><img class="closing-illustration" src="images/closing_illustration.webp" alt="손을 잡고 웃고 있는 단발과 숏컷 단발의 두 신부 일러스트" /><div class="closing-copy"><span>AND THEY LIVED HAPPILY EVER AFTER</span><h2>저희 둘,<br>행복하게 잘 살겠습니다.</h2></div></section>
@@ -908,6 +1004,22 @@
   </div>
 </dialog>
 
+
+<dialog id="capsuleDialog">
+  <div class="modal">
+    <button class="close" id="closeCapsuleDialog" aria-label="닫기">×</button>
+    <p class="section-label" style="text-align:left;margin-bottom:12px">TIME CAPSULE</p>
+    <h2>우리에게 마음을 남겨주세요.</h2>
+    <p>몇 년 뒤 다시 꺼내볼 수 있도록 소중히 담아둘게요.</p>
+    <form class="form-grid" id="capsuleForm">
+      <input name="name" maxlength="20" placeholder="이름 또는 별명" required>
+      <textarea name="message" maxlength="500" placeholder="몇 년 뒤의 우리에게 남길 한마디" required></textarea>
+      <button class="btn sage full" id="capsuleSubmit" type="submit">타임캡슐에 담기</button>
+    </form>
+    <p style="font-size:10px;color:#aaa;margin-top:10px">작성한 이름과 메시지는 이 페이지에 공개됩니다.</p>
+  </div>
+</dialog>
+
 <dialog id="rsvpDialog"><div class="modal"><button class="close" id="closeDialog" aria-label="닫기">×</button><h2>참석 의사 전달</h2><p>이 예시 파일에서는 입력 내용이 기기에만 저장됩니다.<br>실제 접수용 구글폼 링크로 버튼을 연결해 사용해 주세요.</p><form class="form-grid" id="rsvpForm"><input name="name" placeholder="성함" required><select name="attendance" required><option value="">참석 여부를 선택해 주세요</option><option>기쁜 마음으로 참석할게요</option><option>아쉽지만 참석이 어려워요</option></select><input name="guests" inputmode="numeric" placeholder="동반 인원 (본인 포함)"><textarea name="message" placeholder="두 사람에게 축하 메시지"></textarea><button class="btn sage full" type="submit">마음 전하기</button></form></div></dialog>
 
 <script>
@@ -918,7 +1030,8 @@
     dateText: '2022. 12. 04. SUN', dateLong: '2022년 12월 4일 일요일', timeText: '오전 11시',
     venue: '용산 리베르 스튜디오', address: '서울특별시 용산구 이촌로 5 9층',
     /* 사진 파일을 HTML과 같은 폴더에 넣고 아래 따옴표 안에 파일명을 적어주세요. */
-    photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', gallery11:'images/gallery_11.webp', gallery12:'images/gallery_12.webp', gallery13:'images/gallery_13.webp', closing:'' }
+    photos: { hero:'', profileA:'images/profile_haneul.webp', profileB:'images/profile_daon.webp', gallery1:'images/gallery_01.webp', gallery2:'images/gallery_02.webp', gallery3:'images/gallery_03.webp', gallery4:'images/gallery_04.webp', gallery5:'images/gallery_05.webp', gallery6:'images/gallery_06.webp', gallery7:'images/gallery_07.webp', gallery8:'images/gallery_08.webp', gallery9:'images/gallery_09.webp', gallery10:'images/gallery_10.webp', gallery11:'images/gallery_11.webp', gallery12:'images/gallery_12.webp', gallery13:'images/gallery_13.webp', closing:'' },
+    timeCapsuleWebAppUrl: 'https://script.google.com/macros/s/AKfycbyjgDv2fGWtXaWqtDvOW1HTY0H65KpPhm_6-IKNo6eCB-x6DuACtmu62dnnCJOJBLHKUg/exec'
   };
   const all=(s)=>document.querySelectorAll(s); all('[data-a]').forEach(e=>e.textContent=CONFIG.personA); all('[data-b]').forEach(e=>e.textContent=CONFIG.personB); all('[data-date]').forEach(e=>e.textContent=CONFIG.dateText); all('[data-date-long]').forEach(e=>e.textContent=CONFIG.dateLong); all('[data-time]').forEach(e=>e.textContent=CONFIG.timeText); all('[data-venue]').forEach(e=>e.textContent=CONFIG.venue); all('[data-address]').forEach(e=>e.textContent=CONFIG.address); document.title=`${CONFIG.personA} ♥ ${CONFIG.personB} | 2022.12.04`;
   const encoded=encodeURIComponent(CONFIG.address); document.querySelector('#naverMap').href=`https://map.naver.com/p/search/${encoded}`; document.querySelector('#kakaoMap').href=`https://map.kakao.com/link/search/${encoded}`;
@@ -1068,8 +1181,186 @@
   const dialog=document.querySelector('#rsvpDialog'); const openDialog=()=>dialog.showModal(); document.querySelector('#rsvpBtn').onclick=openDialog;document.querySelector('#bottomRsvp').onclick=openDialog;document.querySelector('#closeDialog').onclick=()=>dialog.close();document.querySelector('#rsvpForm').onsubmit=e=>{e.preventDefault();localStorage.setItem('wedding-rsvp',JSON.stringify(Object.fromEntries(new FormData(e.target))));dialog.close();toast('따뜻한 마음을 전했어요 ♥')};
   document.querySelector('#shareBtn').onclick=async()=>{const data={title:document.title,text:`${CONFIG.personA} & ${CONFIG.personB}의 결혼식에 초대합니다`,url:location.href};if(navigator.share){try{await navigator.share(data)}catch(e){}}else{await navigator.clipboard.writeText(location.href);toast('초대장 주소를 복사했어요')}};
   document.querySelector('#calendarBtn').onclick=()=>{const start=new Date(CONFIG.weddingDate),end=new Date(start.getTime()+2*36e5),fmt=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');const ics=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${fmt(start)}\nDTEND:${fmt(end)}\nSUMMARY:${CONFIG.personA} & ${CONFIG.personB}의 결혼식\nLOCATION:${CONFIG.venue}, ${CONFIG.address}\nEND:VEVENT\nEND:VCALENDAR`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download='wedding.ics';a.click();URL.revokeObjectURL(a.href)};
-  document.querySelector('#guestWrite').onclick=()=>{const name=prompt('성함을 적어주세요');if(!name)return;const message=prompt('축하 메시지를 남겨주세요');if(!message)return;const item=document.createElement('article');item.className='guest-message';item.innerHTML=`<strong></strong><time></time><p></p>`;item.querySelector('strong').textContent=name;item.querySelector('time').textContent=new Date().toLocaleDateString('ko-KR');item.querySelector('p').textContent=message;document.querySelector('#guestList').prepend(item);toast('축하의 말을 남겼어요 ♥')};
-  document.querySelector('#guestMore').onclick=()=>toast('등록된 축하글을 모두 보고 있어요');
+  const capsuleDialog=document.querySelector('#capsuleDialog');
+  const capsuleForm=document.querySelector('#capsuleForm');
+  const capsuleSubmit=document.querySelector('#capsuleSubmit');
+  const guestList=document.querySelector('#guestList');
+  const guestMore=document.querySelector('#guestMore');
+  let capsuleEntries=[],showAllCapsules=false;
+  const capsuleApiReady=()=>CONFIG.timeCapsuleWebAppUrl.startsWith('https://script.google.com/macros/s/');
+
+  function formatCapsuleDate(value){
+    const d=new Date(value);
+    return Number.isNaN(d.getTime()) ? String(value||'') : d.toLocaleDateString('ko-KR');
+  }
+
+  function renderCapsules(){
+    guestList.innerHTML='';
+    if(!capsuleEntries.length){
+      const p=document.createElement('p');
+      p.className='capsule-empty';
+      p.textContent=capsuleApiReady()
+        ? '아직 담긴 마음이 없어요. 첫 타임캡슐을 남겨주세요 ♥'
+        : 'Apps Script 웹 앱 주소를 연결하면 여기에 글이 누적돼요.';
+      guestList.appendChild(p);
+      guestMore.hidden=true;
+      return;
+    }
+
+    (showAllCapsules?capsuleEntries:capsuleEntries.slice(0,5)).forEach(entry=>{
+      const item=document.createElement('article');
+      item.className='guest-message';
+      const strong=document.createElement('strong');
+      const time=document.createElement('time');
+      const p=document.createElement('p');
+      strong.textContent=entry.name||'익명';
+      time.textContent=formatCapsuleDate(entry.createdAt);
+      p.textContent=entry.message||'';
+      item.append(strong,time,p);
+      guestList.appendChild(item);
+    });
+
+    guestMore.hidden=capsuleEntries.length<=5;
+    if(!guestMore.hidden){
+      guestMore.textContent=showAllCapsules?'접어보기':`모두 보기 (${capsuleEntries.length})`;
+    }
+  }
+
+  /* Apps Script와의 통신을 JSONP로 처리해 GitHub Pages/모바일의 CORS 문제를 피합니다. */
+  function capsuleJsonp(params={}){
+    return new Promise((resolve,reject)=>{
+      if(!capsuleApiReady()) return reject(new Error('웹 앱 URL이 연결되지 않았습니다.'));
+
+      const callback='capsuleCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+      const script=document.createElement('script');
+      const timer=setTimeout(()=>{
+        cleanup();
+        reject(new Error('타임캡슐 서버 응답 시간이 초과됐습니다.'));
+      },12000);
+
+      function cleanup(){
+        clearTimeout(timer);
+        script.remove();
+        try{delete window[callback]}catch(e){window[callback]=undefined}
+      }
+
+      window[callback]=(data)=>{
+        cleanup();
+        if(data && data.ok) resolve(data);
+        else reject(new Error((data&&data.error)||'타임캡슐 처리에 실패했습니다.'));
+      };
+
+      const qs=new URLSearchParams({...params,callback,_:Date.now()});
+      script.src=`${CONFIG.timeCapsuleWebAppUrl}?${qs.toString()}`;
+      script.onerror=()=>{
+        cleanup();
+        reject(new Error('타임캡슐 서버에 연결하지 못했습니다.'));
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function loadCapsules(){
+    if(!capsuleApiReady()){renderCapsules();return}
+    try{
+      const data=await capsuleJsonp({action:'list'});
+      capsuleEntries=Array.isArray(data.items)?data.items:[];
+      renderCapsules();
+    }catch(err){
+      guestList.innerHTML='<p class="capsule-empty">타임캡슐을 불러오지 못했어요. Apps Script 배포 버전을 확인해 주세요.</p>';
+      guestMore.hidden=true;
+      console.error(err);
+    }
+  }
+
+  document.querySelector('#guestWrite')?.addEventListener('click',()=>{
+    if(!capsuleApiReady()){toast('먼저 Apps Script 웹 앱 주소를 연결해 주세요');return}
+    capsuleDialog.showModal();
+  });
+
+  document.querySelector('#closeCapsuleDialog')?.addEventListener('click',()=>capsuleDialog.close());
+
+  capsuleForm?.addEventListener('submit',async(e)=>{
+    e.preventDefault();
+    const fd=new FormData(capsuleForm);
+    const name=String(fd.get('name')||'').trim();
+    const message=String(fd.get('message')||'').trim();
+    if(!name||!message)return;
+
+    capsuleSubmit.disabled=true;
+    capsuleSubmit.classList.add('capsule-submit-state');
+    capsuleSubmit.textContent='담는 중...';
+
+    try{
+      await capsuleJsonp({action:'add',name,message});
+      capsuleForm.reset();
+      capsuleDialog.close();
+      toast('타임캡슐에 마음을 담았어요 ♥');
+      await loadCapsules();
+    }catch(err){
+      toast('저장하지 못했어요. Apps Script 배포를 확인해 주세요');
+      console.error(err);
+    }finally{
+      capsuleSubmit.disabled=false;
+      capsuleSubmit.classList.remove('capsule-submit-state');
+      capsuleSubmit.textContent='타임캡슐에 담기';
+    }
+  });
+
+  guestMore?.addEventListener('click',()=>{
+    showAllCapsules=!showAllCapsules;
+    renderCapsules();
+  });
+
+  loadCapsules();
+
+
+  /* Heart wish effect */
+  const heartWishBtn=document.querySelector('#heartWishBtn');
+  const heartWishSection=document.querySelector('.heart-wish');
+
+  heartWishBtn?.addEventListener('click',()=>{
+    if(!heartWishSection) return;
+
+    const hearts=12;
+    for(let i=0;i<hearts;i++){
+      const heart=document.createElement('span');
+      heart.className='heart-pop';
+      heart.textContent='♥';
+
+      const angle=(Math.PI*2/hearts)*i + (Math.random()*.35);
+      const distance=55 + Math.random()*70;
+      const x=Math.cos(angle)*distance;
+      const y=Math.sin(angle)*distance - 35;
+
+      heart.style.setProperty('--x',`${x}px`);
+      heart.style.setProperty('--y',`${y}px`);
+      heart.style.setProperty('--s',`${0.7+Math.random()*1.1}`);
+      heart.style.left=`${50+(Math.random()*4-2)}%`;
+      heart.style.top=`${59+(Math.random()*3-1.5)}%`;
+      heart.style.animationDelay=`${Math.random()*.12}s`;
+
+      heartWishSection.appendChild(heart);
+      setTimeout(()=>heart.remove(),1400);
+    }
+  });
+
+  /* Our little story card arrows */
+  const storyCards=document.querySelector('#storyCards');
+  const storyPrev=document.querySelector('#storyPrev');
+  const storyNext=document.querySelector('#storyNext');
+
+  function scrollStory(direction){
+    if(!storyCards) return;
+    const card=storyCards.querySelector('.info-card');
+    const gap=12;
+    const amount=(card?.getBoundingClientRect().width || storyCards.clientWidth*.84)+gap;
+    storyCards.scrollBy({left:direction*amount,behavior:'smooth'});
+  }
+
+  storyPrev?.addEventListener('click',()=>scrollStory(-1));
+  storyNext?.addEventListener('click',()=>scrollStory(1));
+
 </script>
 </body>
 </html>
