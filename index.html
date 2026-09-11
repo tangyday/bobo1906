@@ -939,6 +939,34 @@
     #storyCards{overflow-x:auto!important;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
     #storyCards .info-card{scroll-snap-align:center;scroll-snap-stop:always;flex:0 0 84%}
 
+    /* TIME CAPSULE visibility safeguard: 모바일/스크롤 애니메이션과 무관하게 항상 표시 */
+    .guestbook.reveal{
+      opacity:1!important;
+      transform:none!important;
+      visibility:visible!important;
+    }
+    .guestbook.reveal > .section-label,
+    .guestbook.reveal > .section-title,
+    .guestbook.reveal > .body-copy,
+    .guestbook.reveal > .capsule-open-btn,
+    .guestbook.reveal > .guest-list,
+    .guestbook.reveal > .guest-actions{
+      opacity:1!important;
+      transform:none!important;
+      filter:none!important;
+      visibility:visible!important;
+      transition:none!important;
+    }
+    .guestbook .guest-message{
+      opacity:1!important;
+      transform:none!important;
+      clip-path:none!important;
+      visibility:visible!important;
+    }
+    .guestbook .capsule-open-btn{
+      display:flex!important;
+    }
+
   </style>
 </head>
 <body>
