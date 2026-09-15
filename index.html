@@ -732,6 +732,8 @@
     .guest-actions .btn[hidden]{display:none}
     #capsuleDialog textarea{height:130px;line-height:1.7}
     .capsule-submit-state{opacity:.65;pointer-events:none}
+    .capsule-retry-btn{margin:12px auto 0;border:1px solid #eadfe3;background:#fff;color:#7b6d72;border-radius:999px;padding:9px 16px;font-size:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .capsule-retry-btn:active{transform:scale(.98)}
 
     /* our little story */
     .info-card{position:relative}
@@ -938,34 +940,6 @@
     /* stronger story horizontal behavior */
     #storyCards{overflow-x:auto!important;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
     #storyCards .info-card{scroll-snap-align:center;scroll-snap-stop:always;flex:0 0 84%}
-
-    /* TIME CAPSULE visibility safeguard: 모바일/스크롤 애니메이션과 무관하게 항상 표시 */
-    .guestbook.reveal{
-      opacity:1!important;
-      transform:none!important;
-      visibility:visible!important;
-    }
-    .guestbook.reveal > .section-label,
-    .guestbook.reveal > .section-title,
-    .guestbook.reveal > .body-copy,
-    .guestbook.reveal > .capsule-open-btn,
-    .guestbook.reveal > .guest-list,
-    .guestbook.reveal > .guest-actions{
-      opacity:1!important;
-      transform:none!important;
-      filter:none!important;
-      visibility:visible!important;
-      transition:none!important;
-    }
-    .guestbook .guest-message{
-      opacity:1!important;
-      transform:none!important;
-      clip-path:none!important;
-      visibility:visible!important;
-    }
-    .guestbook .capsule-open-btn{
-      display:flex!important;
-    }
 
   </style>
 </head>
@@ -1366,6 +1340,38 @@
   const guestWrite=document.querySelector('#guestWrite');
   let capsuleEntries=[],showAllCapsules=false;
   const capsuleApiReady=()=>CONFIG.timeCapsuleWebAppUrl.startsWith('https://script.google.com/macros/s/');
+  const CAPSULE_CACHE_KEY=`timeCapsuleCache:${location.pathname}`;
+  const CAPSULE_CACHE_MAX_AGE=1000*60*60*24*30; // 30일, 서버 성공 시 항상 최신값으로 갱신
+
+  function saveCapsuleCache(items){
+    try{
+      localStorage.setItem(CAPSULE_CACHE_KEY,JSON.stringify({
+        items:Array.isArray(items)?items:[],
+        savedAt:Date.now()
+      }));
+    }catch(err){
+      console.warn('타임캡슐 캐시 저장 실패',err);
+    }
+  }
+
+  function loadCapsuleCache(){
+    try{
+      const raw=localStorage.getItem(CAPSULE_CACHE_KEY);
+      if(!raw) return null;
+      const parsed=JSON.parse(raw);
+      if(!parsed || !Array.isArray(parsed.items)) return null;
+      if(parsed.savedAt && Date.now()-Number(parsed.savedAt)>CAPSULE_CACHE_MAX_AGE){
+        localStorage.removeItem(CAPSULE_CACHE_KEY);
+        return null;
+      }
+      return parsed;
+    }catch(err){
+      console.warn('타임캡슐 캐시 불러오기 실패',err);
+      return null;
+    }
+  }
+
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
   function formatCapsuleDate(value){
     const d=new Date(value);
@@ -1406,7 +1412,7 @@
       if(!capsuleApiReady()) return reject(new Error('웹 앱 URL이 연결되지 않았습니다.'));
       const callback='capsuleCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);
       const script=document.createElement('script');
-      const timer=setTimeout(()=>{cleanup();reject(new Error('타임캡슐 서버 응답 시간이 초과됐습니다.'));},12000);
+      const timer=setTimeout(()=>{cleanup();reject(new Error('타임캡슐 서버 응답 시간이 초과됐습니다.'));},8000);
       function cleanup(){clearTimeout(timer);script.remove();try{delete window[callback]}catch(e){window[callback]=undefined}}
       window[callback]=(data)=>{cleanup();data&&data.ok?resolve(data):reject(new Error((data&&data.error)||'타임캡슐 처리에 실패했습니다.'));};
       const qs=new URLSearchParams({...params,callback,_:Date.now()});
@@ -1420,45 +1426,92 @@
   async function capsuleFetch(params={}, method='GET'){
     if(!capsuleApiReady()) throw new Error('웹 앱 URL이 연결되지 않았습니다.');
 
-    if(method==='GET'){
-      const qs=new URLSearchParams({...params,_:Date.now()});
-      const res=await fetch(`${CONFIG.timeCapsuleWebAppUrl}?${qs.toString()}`,{
-        method:'GET',
-        cache:'no-store'
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),9000);
+    try{
+      if(method==='GET'){
+        const qs=new URLSearchParams({...params,_:Date.now()});
+        const res=await fetch(`${CONFIG.timeCapsuleWebAppUrl}?${qs.toString()}`,{
+          method:'GET',
+          cache:'no-store',
+          signal:controller.signal
+        });
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      }
+
+      const body=new URLSearchParams(params);
+      const res=await fetch(CONFIG.timeCapsuleWebAppUrl,{
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+        body,
+        signal:controller.signal
       });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
+    }catch(err){
+      if(err?.name==='AbortError') throw new Error('타임캡슐 서버 응답 시간이 초과됐습니다.');
+      throw err;
+    }finally{
+      clearTimeout(timeout);
     }
-
-    const body=new URLSearchParams(params);
-    const res=await fetch(CONFIG.timeCapsuleWebAppUrl,{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-      body
-    });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
   }
 
-  async function loadCapsules(){
-    if(!capsuleApiReady()){renderCapsules();return}
+  async function requestCapsuleList(){
     try{
-      let data;
-      try{
-        data=await capsuleJsonp({action:'list'});
-      }catch(jsonpErr){
-        console.warn('JSONP 목록 조회 실패, fetch 방식으로 재시도합니다.',jsonpErr);
-        data=await capsuleFetch({action:'list'},'GET');
-      }
-
-      if(!data || !data.ok) throw new Error((data&&data.error)||'load failed');
-      capsuleEntries=Array.isArray(data.items)?data.items:[];
-      renderCapsules();
-    }catch(err){
-      guestList.innerHTML='<p class="capsule-empty">타임캡슐을 불러오지 못했어요. Apps Script 배포 또는 접근 권한을 확인해 주세요.</p>';
-      guestMore.hidden=true;
-      console.error(err);
+      return await capsuleJsonp({action:'list'});
+    }catch(jsonpErr){
+      console.warn('JSONP 목록 조회 실패, fetch 방식으로 재시도합니다.',jsonpErr);
+      return await capsuleFetch({action:'list'},'GET');
     }
+  }
+
+  async function loadCapsules(options={}){
+    if(!capsuleApiReady()){renderCapsules();return}
+
+    const {forceLoading=false}=options;
+    const cached=loadCapsuleCache();
+
+    // 마지막 정상 데이터를 먼저 보여주고, 뒤에서 최신 목록을 받아온다.
+    if(cached){
+      capsuleEntries=cached.items;
+      renderCapsules();
+    }else if(forceLoading || !capsuleEntries.length){
+      guestList.innerHTML='<p class="capsule-empty">타임캡슐을 불러오는 중이에요.</p>';
+      guestMore.hidden=true;
+    }
+
+    let lastError=null;
+    const delays=[0,1200,2500];
+    for(let attempt=0;attempt<delays.length;attempt++){
+      if(delays[attempt]) await wait(delays[attempt]);
+      try{
+        const data=await requestCapsuleList();
+        if(!data || !data.ok) throw new Error((data&&data.error)||'load failed');
+        capsuleEntries=Array.isArray(data.items)?data.items:[];
+        saveCapsuleCache(capsuleEntries);
+        renderCapsules();
+        return;
+      }catch(err){
+        lastError=err;
+        console.warn(`타임캡슐 목록 조회 ${attempt+1}/${delays.length}회 실패`,err);
+      }
+    }
+
+    // 캐시가 있으면 오류 문구로 덮어쓰지 않고 마지막 정상 목록을 유지한다.
+    if(cached){
+      console.error('최신 타임캡슐을 불러오지 못해 캐시 데이터를 유지합니다.',lastError);
+      return;
+    }
+
+    guestList.innerHTML=`
+      <div class="capsule-empty">
+        타임캡슐을 잠시 불러오지 못했어요.<br>
+        <button type="button" class="capsule-retry-btn" id="capsuleRetryBtn">다시 불러오기</button>
+      </div>`;
+    guestMore.hidden=true;
+    document.querySelector('#capsuleRetryBtn')?.addEventListener('click',()=>loadCapsules({forceLoading:true}),{once:true});
+    console.error(lastError);
   }
 
   guestWrite?.addEventListener('click',()=>{
